@@ -30,8 +30,8 @@
       <div class="navbar-right">
         <div class="user-profile">
           <div class="user-meta">
-            <span class="user-name" id="alunoNome">João Silva</span>
-            <span class="user-turma" id="alunoTurma">Turma: Informática para Internet</span>
+            <span class="user-name" id="alunoNome">Aluno</span>
+            <span class="user-turma" id="alunoTurma">Turma não informada</span>
           </div>
         </div>
 
@@ -52,7 +52,7 @@
           <span class="strip-orange"></span>
         </div>
         <div class="card-inner welcome-content">
-          <h2 class="welcome-heading">Olá, <span id="welcomeNome">João</span>! Escolha como quer continuar sua história.</h2>
+          <h2 class="welcome-heading">Olá, <span id="welcomeNome">aluno</span>! Escolha como quer continuar sua história.</h2>
         </div>
       </section>
 
@@ -119,9 +119,13 @@
 
   <script>
     const params = new URLSearchParams(location.search);
-    const nome = params.get('nome'); const turma = params.get('turma'); const alunoId = params.get('id') || params.get('aluno_id');
+    const nome = params.get('nome') || sessionStorage.getItem('aluno_nome'); const turma = params.get('turma') || sessionStorage.getItem('aluno_turma'); const alunoId = params.get('id') || params.get('aluno_id') || sessionStorage.getItem('aluno_id');
+    if (alunoId) sessionStorage.setItem('aluno_id', alunoId);
+    if (nome) sessionStorage.setItem('aluno_nome', nome);
+    if (turma) sessionStorage.setItem('aluno_turma', turma);
     if (nome) { document.getElementById('alunoNome').textContent=nome; document.getElementById('welcomeNome').textContent=nome.trim().split(' ')[0]; }
     if (turma) document.getElementById('alunoTurma').textContent='Turma: '+turma;
+    if (!alunoId) { document.getElementById('alunoNome').textContent='Sessão não identificada'; document.getElementById('welcomeNome').textContent='aluno'; }
     const panel=document.getElementById('historiasDoDia'), list=document.getElementById('listaHistoriasDoDia'), message=document.getElementById('mensagemHistorias');
     const goToStory = id => { if(!alunoId){ alert('Não foi possível identificar seu cadastro. Faça login novamente.'); return; } const q=new URLSearchParams({id:alunoId,historia_id:id}); if(nome)q.set('nome',nome); if(turma)q.set('turma',turma); location.href='/aluno/prontuario?'+q.toString(); };
     document.getElementById('escolherProfessor').addEventListener('click', async()=>{

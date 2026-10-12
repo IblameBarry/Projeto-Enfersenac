@@ -232,7 +232,11 @@ app.post('/prontuario/salvar', async (req, res) => {
     }
 
     await respostaModel.salvar(req.body, { aluno_id, historia_id, enviar: true });
-    res.sendFile(path.join(__dirname, 'public', 'sucesso-envio.html'));
+    const q = new URLSearchParams();
+    q.set('id', String(aluno_id));
+    if (req.body.nome_aluno) q.set('nome', String(req.body.nome_aluno));
+    if (req.body.turma_aluno) q.set('turma', String(req.body.turma_aluno));
+    res.redirect(`/prontuario/sucesso?${q.toString()}`);
   } catch (err) {
     if (err.status === 400) return res.status(400).send(err.message);
     console.error(err);

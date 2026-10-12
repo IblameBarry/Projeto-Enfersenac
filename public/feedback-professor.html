@@ -233,6 +233,29 @@
     const respostaField = document.getElementById('feedbackRespostaId');
     if (professorField && professorId) professorField.value = professorId;
     if (respostaField && respostaId) respostaField.value = respostaId;
+    if (professorId) sessionStorage.setItem('professor_id', professorId);
+    const emailParam = feedbackParams.get('email') || sessionStorage.getItem('professor_email');
+    if (emailParam) sessionStorage.setItem('professor_email', emailParam);
+    if (respostaId) {
+      fetch('/api/respostas/' + encodeURIComponent(respostaId))
+        .then(response => { if (!response.ok) throw new Error('Resposta não encontrada'); return response.json(); })
+        .then(resposta => {
+          const heading = document.querySelector('.eval-form');
+          if (heading) {
+            const info = document.createElement('p');
+            info.className = 'selected-answer-context';
+            info.textContent = 'Feedback para: ' + (resposta.aluno_nome || 'Aluno') + ' · ' + (resposta.historia_titulo || 'História');
+            heading.prepend(info);
+          }
+        })
+        .catch(() => {
+          const info = document.createElement('p');
+          info.className = 'selected-answer-context';
+          info.textContent = 'Não foi possível carregar a resposta selecionada. Volte à lista e selecione um prontuário válido.';
+          form.prepend(info);
+        });
+    }
+
     const form = document.querySelector('.eval-form');
     form.addEventListener('submit', event => {
       if (!professorField.value || !respostaField.value) {
@@ -243,5 +266,6 @@
       }
     });
   </script>
+  <style>.selected-answer-context{padding:12px 14px;margin:0 0 16px;border:1px solid #d7e2e8;border-radius:8px;background:#f3f7f9;color:#354e5d;line-height:1.5}.eval-form input,.eval-form textarea,.eval-form select{border-color:#cbd5dc}.eval-form button{filter:saturate(.9)}</style>
 </body>
 </html>

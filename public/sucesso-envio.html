@@ -74,7 +74,7 @@
 
           <!-- Ações -->
           <div class="success-actions">
-            <a href="/portal-aluno" class="btn-primary-back">
+            <a href="/portal-aluno" id="voltarPortalAluno" class="btn-primary-back">
               <i class="fa-solid fa-arrow-left"></i>
               <span>Voltar para o Portal do Aluno</span>
             </a>
@@ -92,6 +92,13 @@
   </div>
 
   <script>
+    const sucessoParams = new URLSearchParams(location.search);
+    const retorno = new URLSearchParams();
+    ['id','nome','turma'].forEach(k => { if (sucessoParams.has(k)) retorno.set(k, sucessoParams.get(k)); });
+    if (!retorno.has('id') && sessionStorage.getItem('aluno_id')) retorno.set('id', sessionStorage.getItem('aluno_id'));
+    if (!retorno.has('nome') && sessionStorage.getItem('aluno_nome')) retorno.set('nome', sessionStorage.getItem('aluno_nome'));
+    if (!retorno.has('turma') && sessionStorage.getItem('aluno_turma')) retorno.set('turma', sessionStorage.getItem('aluno_turma'));
+    document.getElementById('voltarPortalAluno').href = '/portal-aluno' + (retorno.toString() ? '?' + retorno.toString() : '');
     // Coloca a data e hora formatada
     const agora = new Date();
     const dataFormatada = agora.toLocaleDateString('pt-BR') + ' às ' + agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });

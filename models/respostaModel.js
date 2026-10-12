@@ -126,7 +126,8 @@ async function buscarPorId(id) {
 async function listarEnviadas() {
   const { rows } = await pool.query(`
     SELECT r.*, a.nome AS aluno_nome, a.turma AS aluno_turma,
-           h.codigo AS historia_codigo, h.titulo AS historia_titulo
+           h.codigo AS historia_codigo, h.titulo AS historia_titulo,
+           (SELECT COUNT(*)::int FROM comentario c WHERE c.resposta_id = r.id) AS total_comentarios
     FROM resposta r
     JOIN aluno a ON a.id = r.aluno_id
     JOIN historia h ON h.id = r.historia_id

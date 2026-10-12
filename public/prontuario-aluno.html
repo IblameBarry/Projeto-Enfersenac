@@ -100,6 +100,8 @@
           <form action="/prontuario/salvar" method="POST" id="formProntuario">
             <input type="hidden" name="aluno_id" id="aluno_id">
             <input type="hidden" name="historia_id" id="historia_id">
+            <input type="hidden" name="nome_aluno" id="nome_aluno">
+            <input type="hidden" name="turma_aluno" id="turma_aluno">
 
             <!-- ETAPA 1: Identificação do Paciente -->
             <fieldset class="form-section-block">
@@ -433,7 +435,11 @@
     const params = new URLSearchParams(window.location.search);
     const nome = params.get('nome');
     const turma = params.get('turma');
-    const alunoId = params.get('id') || params.get('aluno_id');
+    const alunoId = params.get('id') || params.get('aluno_id') || sessionStorage.getItem('aluno_id');
+    const nomeAluno = params.get('nome') || sessionStorage.getItem('aluno_nome') || '';
+    const turmaAluno = params.get('turma') || sessionStorage.getItem('aluno_turma') || '';
+    document.getElementById('nome_aluno').value = nomeAluno;
+    document.getElementById('turma_aluno').value = turmaAluno;
     const historiaId = params.get('historia_id');
 
     document.getElementById('aluno_id').value = alunoId || '';
