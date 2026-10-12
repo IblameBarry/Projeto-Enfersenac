@@ -28,6 +28,15 @@ async function listarAtivasParaTurma(turma) {
   return rows;
 }
 
+async function listarPorProfessor(professorId) {
+  const { rows } = await pool.query(
+    `SELECT h.*, (SELECT COUNT(*)::int FROM resposta r WHERE r.historia_id = h.id AND r.status = 'ENVIADA') AS total_respostas
+     FROM historia h WHERE h.professor_id = $1 ORDER BY h.data_publicacao DESC`,
+    [professorId]
+  );
+  return rows;
+}
+
 async function listarTodas() {
   const { rows } = await pool.query(
     `SELECT h.*, p.nome AS professor_nome
@@ -43,4 +52,4 @@ async function buscarPorId(id) {
   return rows[0] || null;
 }
 
-module.exports = { criar, listarAtivasParaTurma, listarTodas, buscarPorId };
+module.exports = { criar, listarAtivasParaTurma, listarTodas, listarPorProfessor, buscarPorId };

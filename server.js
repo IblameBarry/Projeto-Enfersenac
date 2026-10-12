@@ -84,6 +84,17 @@ app.get('/dashboard-professor/feedback', (req, res) => {
    API (JSON)
 ============================================================ */
 
+app.get('/api/professores/:id/historias', async (req, res) => {
+  try {
+    if (!/^\d+$/.test(String(req.params.id))) return res.status(400).json({ erro: 'ID de professor inválido.' });
+    const historias = await historiaModel.listarPorProfessor(req.params.id);
+    res.json(historias);
+  } catch (err) {
+    console.error('Erro ao listar histórias do professor:', err);
+    res.status(500).json({ erro: 'Erro ao buscar histórias publicadas.' });
+  }
+});
+
 // Histórias ativas para a turma do aluno (ou todas, se não passar ?turma=)
 app.get('/api/historias', async (req, res) => {
   try {

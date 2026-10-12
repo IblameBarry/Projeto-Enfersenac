@@ -131,10 +131,11 @@
                   <th style="width: 10%; text-align: right;">Ações</th>
                 </tr>
               </thead>
+              <tbody id="historiasPublicadas"></tbody>
             </table>
 
             <!-- Estado Vazio (Sem histórias ainda) -->
-            <div class="empty-state">
+            <div class="empty-state" id="historiasVazio">
               <div class="empty-icon-box">
                 <i class="fa-regular fa-folder-open"></i>
               </div>
@@ -154,35 +155,47 @@
 
   </div>
 
-  <!-- Script para receber o nome e e-mail da URL dinamicamente -->
   <script>
     const params = new URLSearchParams(window.location.search);
-    const email = params.get('email');
-    const nome = params.get('nome');
-    const professorId = params.get('id') || sessionStorage.getItem('professor_id');
+    const email = params.get('email') || sessionStorage.getItem('professor_email') || '';
+    const nome = params.get('nome') || sessionStorage.getItem('professor_nome') || '';
+    const professorId = params.get('id') || sessionStorage.getItem('professor_id') || '';
     const professorIdField = document.getElementById('historiaProfessorId');
-    if (professorIdField && professorId) professorIdField.value = professorId;
+    if (professorIdField) professorIdField.value = professorId;
     if (professorId) sessionStorage.setItem('professor_id', professorId);
-    if (email) sessionStorage.setItem('professor_email', email);
-
-    if (email) {
-      document.getElementById('profEmail').textContent = email;
-    }
+    if (email) { sessionStorage.setItem('professor_email', email); document.getElementById('profEmail').textContent = email; }
+    if (nome) { sessionStorage.setItem('professor_nome', nome); document.getElementById('profNome').textContent = nome; }
+    else if (email) document.getElementById('profNome').textContent = 'Prof. ' + email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
     document.querySelectorAll('a[href^="/dashboard-professor/respostas"], a[href^="/dashboard-professor/feedback"]').forEach(link => {
-      const target = new URL(link.href);
-      if (professorId) target.searchParams.set('id', professorId);
-      if (email) target.searchParams.set('email', email);
-      link.href = target.pathname + target.search;
+      const target = new URL(link.href); if (professorId) target.searchParams.set('id', professorId); if (email) target.searchParams.set('email', email); link.href = target.pathname + target.search;
     });
 
-    if (nome) {
-      document.getElementById('profNome').textContent = nome;
-    } else if (email) {
-      const parteNome = email.split('@')[0].replace(/[._]/g, ' ');
-      const nomeFormatado = parteNome.replace(/\b\w/g, l => l.toUpperCase());
-      document.getElementById('profNome').textContent = 'Prof. ' + nomeFormatado;
+    const tbody = document.getElementById('historiasPublicadas');
+    const vazio = document.getElementById('historiasVazio');
+    const dataFmt = value => value ? new Date(value).toLocaleDateString('pt-BR') : 'Sem prazo';
+    async function carregarHistorias() {
+      if (!professorId) { vazio.querySelector('.empty-text').textContent = 'Não foi possível identificar o professor. Entre novamente pela tela de login.'; return; }
+      try {
+        const response = await fetch('/api/professores/' + encodeURIComponent(professorId) + '/historias');
+        if (!response.ok) throw new Error('Não foi possível carregar as histórias.');
+        const historias = await response.json(); tbody.replaceChildren();
+        vazio.hidden = historias.length > 0;
+        historias.forEach(h => {
+          const tr = document.createElement('tr');
+          [h.titulo, dataFmt(h.data_publicacao), dataFmt(h.data_expiracao), String(h.total_respostas || 0), h.status || 'ATIVA'].forEach(value => { const td=document.createElement('td'); td.textContent=value; tr.appendChild(td); });
+          const acao=document.createElement('td'); acao.style.textAlign='right'; const link=document.createElement('a'); link.className='action-link'; link.href='/dashboard-professor/respostas?id='+encodeURIComponent(professorId)+'&historia_id='+encodeURIComponent(h.id); link.textContent='Respostas'; acao.appendChild(link); tr.appendChild(acao); tbody.appendChild(tr);
+        });
+      } catch (error) { vazio.hidden = false; vazio.querySelector('.empty-text').textContent = error.message; }
     }
+    const form = document.querySelector('.story-form');
+    const draftKey = 'pontuario_historia_rascunho_' + (professorId || 'sem-id');
+    if (form) {
+      try { const draft=JSON.parse(localStorage.getItem(draftKey)||'null'); if(draft){ ['titulo','conteudo','expiracao'].forEach(id=>{if(draft[id] && document.getElementById(id)) document.getElementById(id).value=draft[id];}); } } catch {}
+      form.addEventListener('input', () => { const draft={}; ['titulo','conteudo','expiracao'].forEach(id=>draft[id]=document.getElementById(id)?.value||''); localStorage.setItem(draftKey,JSON.stringify(draft)); });
+      form.addEventListener('submit', () => localStorage.removeItem(draftKey));
+    }
+    carregarHistorias();
   </script>
 </body>
 </html>

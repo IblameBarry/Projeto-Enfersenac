@@ -442,11 +442,34 @@
     if (nome) document.getElementById('dockNome').textContent = 'Aluno: ' + nome;
     if (turma) document.getElementById('dockTurma').textContent = 'Turma: ' + turma;
 
-    document.getElementById('formProntuario').addEventListener('submit', (event) => {
+    const formProntuario = document.getElementById('formProntuario');
+    const draftKey = `pontuario_prontuario_${alunoId || 'aluno'}_${historiaId || 'historia'}`;
+    const draftButton = document.querySelector('.btn-rascunho');
+    function salvarRascunhoLocal() {
+      const dados = {};
+      formProntuario.querySelectorAll('input, textarea, select').forEach(campo => {
+        if (campo.name && campo.type !== 'hidden' && campo.type !== 'checkbox' && campo.type !== 'radio') dados[campo.name] = campo.value;
+        else if (campo.name && (campo.type === 'checkbox' || campo.type === 'radio')) dados[campo.name] = campo.checked;
+      });
+      localStorage.setItem(draftKey, JSON.stringify(dados));
+      if (draftButton) { const label = draftButton.querySelector('span'); if (label) label.textContent = 'Rascunho salvo neste dispositivo'; }
+    }
+    try {
+      const dados = JSON.parse(localStorage.getItem(draftKey) || 'null');
+      if (dados) formProntuario.querySelectorAll('input, textarea, select').forEach(campo => {
+        if (campo.name && Object.prototype.hasOwnProperty.call(dados, campo.name)) {
+          if (campo.type === 'checkbox' || campo.type === 'radio') campo.checked = Boolean(dados[campo.name]);
+          else if (campo.type !== 'hidden') campo.value = dados[campo.name];
+        }
+      });
+    } catch {}
+    if (draftButton) draftButton.addEventListener('click', salvarRascunhoLocal);
+    formProntuario.addEventListener('input', () => { if (draftButton) { const label = draftButton.querySelector('span'); if (label) label.textContent = 'Salvar Rascunho'; } });
+    formProntuario.addEventListener('submit', (event) => {
       if (!document.getElementById('aluno_id').value || !document.getElementById('historia_id').value) {
         event.preventDefault();
         alert('Não foi possível identificar o aluno ou a história. Volte ao portal e selecione a história novamente.');
-      }
+      } else { localStorage.removeItem(draftKey); }
     });
   </script>
 </body>
