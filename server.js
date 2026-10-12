@@ -161,6 +161,9 @@ app.post('/login/professor', async (req, res) => {
   try {
     const { email, senha } = req.body;
     const emailNormalizado = String(email || '').trim().toLowerCase();
+    if (!emailNormalizado.endsWith('@ms.senac.br')) {
+      return res.redirect('/login/professor?erro=email-corporativo');
+    }
     const professor = await professorModel.buscarPorEmail(emailNormalizado);
 
     if (!professor) {
