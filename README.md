@@ -15,7 +15,7 @@ npm run db:test
 npm run dev
 ```
 
-Abra http://localhost:3001.
+Abra http://localhost:3000.
 
 ## Dados de demonstração
 

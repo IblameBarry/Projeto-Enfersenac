@@ -12,7 +12,7 @@ const respostaModel = require('./models/respostaModel');
 const comentarioModel = require('./models/comentarioModel');
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -160,13 +160,14 @@ app.post('/login/aluno', async (req, res) => {
 app.post('/login/professor', async (req, res) => {
   try {
     const { email, senha } = req.body;
-    const professor = await professorModel.buscarPorEmail(email);
+    const emailNormalizado = String(email || '').trim().toLowerCase();
+    const professor = await professorModel.buscarPorEmail(emailNormalizado);
 
     if (!professor) {
       return res.redirect('/login/professor?erro=credenciais');
     }
 
-    const senhaValida = await professorModel.verificarSenha(senha, professor.senha_hash);
+    const senhaValida = Boolean(senha) && await professorModel.verificarSenha(senha, professor.senha_hash);
     if (!senhaValida) {
       return res.redirect('/login/professor?erro=credenciais');
     }
