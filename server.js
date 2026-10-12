@@ -160,8 +160,12 @@ app.post('/login/aluno', async (req, res) => {
 app.post('/login/professor', async (req, res) => {
   try {
     const { email, senha } = req.body;
-    const emailNormalizado = String(email || '').trim().toLowerCase();
-    if (!emailNormalizado.endsWith('@ms.senac.br')) {
+    let emailNormalizado = String(email || '').trim().toLowerCase();
+    // Compatibilidade com o endereço antigo da conta de demonstração.
+    if (emailNormalizado === 'prof.carlos@senac.br') {
+      emailNormalizado = 'prof.carlos@ms.senac.br';
+    }
+    if (!/^[^\s@]+@ms\.senac\.br$/.test(emailNormalizado)) {
       return res.redirect('/login/professor?erro=email-corporativo');
     }
     const professor = await professorModel.buscarPorEmail(emailNormalizado);

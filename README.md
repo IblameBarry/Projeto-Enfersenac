@@ -30,3 +30,10 @@ O seed cria o professor de teste e uma história apenas se ainda não existirem.
 O banco precisa ter recebido o schema PostgreSQL no SQL Editor do Supabase antes de iniciar a aplicação. Não execute um schema MySQL neste projeto. O aplicativo usa `DATABASE_URL` quando definida; também aceita a configuração dividida `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD` e `DB_NAME`.
 
 `DB_SSL=true` habilita TLS. `DB_SSL_REJECT_UNAUTHORIZED=false` é uma opção de compatibilidade com conexões cujo certificado não é reconhecido pelo Node.js; a conexão continua criptografada, mas a identidade do certificado não é validada. Prefira `true` quando a cadeia de certificados do sistema estiver configurada corretamente.
+
+## Correções de deploy (outubro de 2026)
+
+- Os caminhos do logotipo foram padronizados para corresponder exatamente ao nome `public/img/logo_SenacF.png` (Linux diferencia maiúsculas e minúsculas).
+- O login docente aceita somente endereços terminados em `@ms.senac.br`.
+- A conta de demonstração só é criada/atualizada ao executar `npm run db:seed` com `DATABASE_URL` apontando para o banco correto. Não execute o seed sem confirmar o banco, pois ele altera a conta de demonstração e cria uma história de exemplo.
+- Configure `DATABASE_URL`, `DB_SSL=true` e `DB_SSL_REJECT_UNAUTHORIZED=false` separadamente no Render. Nunca coloque credenciais reais em `.env.example` ou no repositório.
