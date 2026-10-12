@@ -58,6 +58,7 @@
           <p class="card-subheading">Crie um novo enunciado ou gancho de história para que seus alunos continuem.</p>
 
           <form action="/historias/publicar" method="POST" class="story-form">
+            <input type="hidden" name="professor_id" id="historiaProfessorId">
             <div class="form-item">
               <label for="titulo" class="input-label">Título da História</label>
               <input 
@@ -158,10 +159,22 @@
     const params = new URLSearchParams(window.location.search);
     const email = params.get('email');
     const nome = params.get('nome');
+    const professorId = params.get('id') || sessionStorage.getItem('professor_id');
+    const professorIdField = document.getElementById('historiaProfessorId');
+    if (professorIdField && professorId) professorIdField.value = professorId;
+    if (professorId) sessionStorage.setItem('professor_id', professorId);
+    if (email) sessionStorage.setItem('professor_email', email);
 
     if (email) {
       document.getElementById('profEmail').textContent = email;
     }
+
+    document.querySelectorAll('a[href^="/dashboard-professor/respostas"], a[href^="/dashboard-professor/feedback"]').forEach(link => {
+      const target = new URL(link.href);
+      if (professorId) target.searchParams.set('id', professorId);
+      if (email) target.searchParams.set('email', email);
+      link.href = target.pathname + target.search;
+    });
 
     if (nome) {
       document.getElementById('profNome').textContent = nome;

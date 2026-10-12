@@ -203,7 +203,7 @@ app.post('/historias/publicar', async (req, res) => {
       turma: turma || null,
       data_expiracao: expiracao || null,
     });
-    res.redirect('/dashboard-professor');
+    res.redirect(`/dashboard-professor?id=${encodeURIComponent(professor_id)}`);
   } catch (err) {
     console.error(err);
     res.status(500).send('Erro ao publicar história.');

@@ -120,6 +120,8 @@
           <p class="card-subheading">Atribua a pontuação por competência e elabore as orientações pedagógicas para a aluna.</p>
 
           <form action="/feedback/salvar" method="POST" class="eval-form">
+            <input type="hidden" name="professor_id" id="feedbackProfessorId">
+            <input type="hidden" name="resposta_id" id="feedbackRespostaId">
 
             <!-- CRITÉRIOS DE AVALIAÇÃO / COMPETÊNCIAS -->
             <div class="rubric-section">
@@ -223,5 +225,23 @@
     </footer>
 
   </div>
+  <script>
+    const feedbackParams = new URLSearchParams(window.location.search);
+    const professorId = feedbackParams.get('professor_id') || feedbackParams.get('id') || sessionStorage.getItem('professor_id');
+    const respostaId = feedbackParams.get('resposta_id') || feedbackParams.get('respostaId');
+    const professorField = document.getElementById('feedbackProfessorId');
+    const respostaField = document.getElementById('feedbackRespostaId');
+    if (professorField && professorId) professorField.value = professorId;
+    if (respostaField && respostaId) respostaField.value = respostaId;
+    const form = document.querySelector('.eval-form');
+    form.addEventListener('submit', event => {
+      if (!professorField.value || !respostaField.value) {
+        event.preventDefault();
+        alert(!professorField.value
+          ? 'Não foi possível identificar o professor. Entre novamente pelo login.'
+          : 'Selecione uma resposta de aluno antes de publicar o feedback.');
+      }
+    });
+  </script>
 </body>
 </html>
