@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Avaliação e Feedback do Prontuário - Portal do Professor</title>
+
+  <!-- CSS Separado -->
+  <link rel="stylesheet" href="/feedback-professor.css">
+
+  <!-- Fonte Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="feedback-page-wrapper">
+
+    <!-- NAVBAR TOPO -->
+    <header class="navbar">
+      <div class="navbar-left">
+        <img src="/img/logo_SenacF.png" alt="Senac" class="nav-logo">
+        <span class="nav-divider"></span>
+        <h1 class="nav-title">Portal do Professor</h1>
+      </div>
+
+      <div class="navbar-right">
+        <div class="user-profile">
+          <div class="user-meta">
+            <span class="user-name">Prof. Carlos Souza</span>
+            <span class="user-email">prof.carlos@senac.br</span>
+          </div>
+          <div class="user-avatar">
+            <i class="fa-solid fa-user-tie"></i>
+          </div>
+        </div>
+
+        <a href="/" class="btn-logout" title="Sair">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          <span>Sair</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL (GRID 2 COLUNAS) -->
+    <main class="page-container">
+
+      <!-- COLUNA DA ESQUERDA: RESUMO DA ATIVIDADE DO ALUNO -->
+      <section class="dash-card summary-card">
+        <div class="card-strip">
+          <span class="strip-blue"></span>
+          <span class="strip-orange"></span>
+        </div>
+
+        <div class="card-inner">
+          <a href="/dashboard-professor/respostas" class="btn-back">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Voltar às respostas</span>
+          </a>
+
+          <h2 class="card-heading mt-10">Resumo do Aluno</h2>
+          <p class="card-subheading">Informações da submissão do prontuário técnico.</p>
+
+          <div class="student-profile-box">
+            <div class="student-avatar-big">AR</div>
+            <div class="student-profile-info">
+              <strong class="student-profile-name">Ana Ribeiro</strong>
+              <span class="student-profile-cohort">Turma: Enfermagem Geral - Cohorte B</span>
+              <span class="student-profile-id">Protocolo: #PRONT-2026-0482</span>
+            </div>
+          </div>
+
+          <!-- Metadados da Submissão -->
+          <div class="info-list-box">
+            <div class="info-row">
+              <span class="lbl-info">História / Caso:</span>
+              <span class="val-info">Caso do Paciente com Dor Torácica</span>
+            </div>
+            <div class="info-row">
+              <span class="lbl-info">Data de Entrega:</span>
+              <span class="val-info">Hoje às 09:42</span>
+            </div>
+            <div class="info-row">
+              <span class="lbl-info">Status Atual:</span>
+              <span class="status-badge badge-pending">Em Avaliação</span>
+            </div>
+          </div>
+
+          <!-- Extrato das Respostas Principais -->
+          <h3 class="sub-block-title">Extrato do Prontuário Submetido</h3>
+          <div class="extract-box">
+            <div class="extract-item">
+              <span class="extract-lbl">Queixa Principal e Triagem:</span>
+              <p class="extract-txt">"Dor torácica intensa com irradiação para MSE. PA: 160/100 mmHg, FC: 112 bpm."</p>
+            </div>
+            <div class="extract-item">
+              <span class="extract-lbl">Diagnóstico de Enfermagem:</span>
+              <p class="extract-txt">"Dor aguda associada à isquemia miocárdica com necessidade de avaliação prioritária."</p>
+            </div>
+            <div class="extract-item">
+              <span class="extract-lbl">Conduta Proposta:</span>
+              <p class="extract-txt">"Repouso imediato, O2 a 2 L/min, monitorização cardíaca contínua e solicitação de ECG urgente."</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- COLUNA DA DIREITA: FORMULÁRIO DE FEEDBACK E NOTA -->
+      <section class="dash-card feedback-form-card">
+        <div class="card-strip">
+          <span class="strip-blue"></span>
+          <span class="strip-orange"></span>
+        </div>
+
+        <div class="card-inner">
+          <h2 class="card-heading">Registro de Avaliação & Feedback Docente</h2>
+          <p class="card-subheading">Atribua a pontuação por competência e elabore as orientações pedagógicas para a aluna.</p>
+
+          <form action="/feedback/salvar" method="POST" class="eval-form">
+
+            <!-- CRITÉRIOS DE AVALIAÇÃO / COMPETÊNCIAS -->
+            <div class="rubric-section">
+              <h3 class="sub-block-title">Competências Avaliadas</h3>
+
+              <div class="rubric-grid">
+                <!-- Competência 1 -->
+                <div class="rubric-item">
+                  <div class="rubric-info">
+                    <strong>1. Precisão da Triagem</strong>
+                    <span>Coleta de dados vitais e identificação da queixa principal</span>
+                  </div>
+                  <select name="criterio_triagem" class="select-score">
+                    <option value="excelente">Excelente (100%)</option>
+                    <option value="adequado">Adequado (80%)</option>
+                    <option value="regular">Regular (60%)</option>
+                    <option value="insuficiente">Insuficiente (40%)</option>
+                  </select>
+                </div>
+
+                <!-- Competência 2 -->
+                <div class="rubric-item">
+                  <div class="rubric-info">
+                    <strong>2. Raciocínio Diagnóstico</strong>
+                    <span>Formulação de diagnósticos de enfermagem pertinentes</span>
+                  </div>
+                  <select name="criterio_diagnostico" class="select-score">
+                    <option value="excelente" selected>Excelente (100%)</option>
+                    <option value="adequado">Adequado (80%)</option>
+                    <option value="regular">Regular (60%)</option>
+                    <option value="insuficiente">Insuficiente (40%)</option>
+                  </select>
+                </div>
+
+                <!-- Competência 3 -->
+                <div class="rubric-item">
+                  <div class="rubric-info">
+                    <strong>3. Condutas e Prescrições</strong>
+                    <span>Eficácia e segurança nas intervenções propostas</span>
+                  </div>
+                  <select name="criterio_conduta" class="select-score">
+                    <option value="excelente">Excelente (100%)</option>
+                    <option value="adequado" selected>Adequado (80%)</option>
+                    <option value="regular">Regular (60%)</option>
+                    <option value="insuficiente">Insuficiente (40%)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- NOTA / CONCEITO FINAL -->
+            <div class="grade-input-box">
+              <label for="nota_final" class="grade-label">Nota Final / Conceito (0 a 10):</label>
+              <input type="number" id="nota_final" name="nota_final" class="input-grade" value="9.5" step="0.5" min="0" max="10" required>
+            </div>
+
+            <!-- PARECER PEDAGÓGICO / FEEDBACK DETALHADO -->
+            <div class="feedback-field-box">
+              <label for="comentario_docente" class="grade-label">Parecer Descritivo e Orientações:</label>
+              <textarea 
+                id="comentario_docente" 
+                name="comentario_docente" 
+                class="feedback-textarea" 
+                rows="6" 
+                placeholder="Insira as observações pedagógicas, pontos fortes identificados e sugestões de melhoria técnica para o aluno..."
+                required
+              >Parabéns pela condução do caso! A correlação entre a dor torácica aguda e os sinais de alerta hipertensivo foi precisa. A indicação de eletrocardiograma imediato e oxigenoterapia demonstrou excelente raciocínio crítico de urgência. Como recomendação de aperfeiçoamento, lembre-se de detalhar melhor na anamnese a existência de irradiação para a mandíbula ou dorso.</textarea>
+            </div>
+
+            <!-- OPÇÕES ADICIONAIS -->
+            <div class="options-box">
+              <label class="custom-check-lbl">
+                <input type="checkbox" name="notificar_aluno" checked>
+                <span>Enviar notificação com o parecer imediatamente para o portal do aluno.</span>
+              </label>
+              <label class="custom-check-lbl">
+                <input type="checkbox" name="liberar_revisao">
+                <span>Permitir que a aluna reenvie uma segunda versão deste prontuário.</span>
+              </label>
+            </div>
+
+            <!-- BOTÕES DE AÇÃO -->
+            <div class="form-bottom-actions">
+              <a href="/dashboard-professor/respostas" class="btn-cancel">Cancelar</a>
+              <button type="submit" class="btn-submit-feedback">
+                <i class="fa-solid fa-check-double"></i>
+                <span>Publicar Feedback & Salvar Avaliação</span>
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- RODAPÉ -->
+    <footer class="footer-bottom">
+      <span>© 2025 Senac - Educação Profissionalizante para o Comércio</span>
+      <span>Portal do Professor v1.1.0</span>
+    </footer>
+
+  </div>
+</body>
+</html>

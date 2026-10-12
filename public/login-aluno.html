@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acesso do Aluno - Portal de Atendimento</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Fonte Inter (Google Fonts) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Ícones Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="layout-container">
+    
+    <!-- LADO ESQUERDO: APRESENTAÇÃO / ILUSTRAÇÃO -->
+    <aside class="left-panel">
+      <div class="left-content">
+        <!-- Logo Topo Esquerda -->
+        <header class="panel-header">
+          <img src="/img/logo_SenacF.png" alt="Senac Fecomércio" class="logo-top">
+        </header>
+
+        <!-- Títulos -->
+        <div class="panel-intro">
+          <h1 class="title">Portal de<br>Atendimento</h1>
+          <div class="divider-line"></div>
+          <p class="subtitle">
+            Sistema integrado para gestão de atendimentos em unidades de saúde Senac.
+          </p>
+        </div>
+
+        <!-- Ilustração do Edifício -->
+        <div class="illustration-wrapper">
+          <img src="/img/predio.png" alt="Unidade Senac" class="building-img">
+        </div>
+
+        <!-- Linhas decorativas e rodapé -->
+        <footer class="panel-footer">
+          <div class="accent-lines">
+            <span class="line-thick"></span>
+            <span class="line-thin"></span>
+          </div>
+          <p class="copyright">© 2025 Senac - Saúde e Bem-Estar</p>
+        </footer>
+      </div>
+    </aside>
+
+    <!-- LADO DIREITO: FORMULÁRIO DO ALUNO -->
+    <main class="right-panel">
+      <div class="card-login">
+        <!-- Barra colorida no topo do cartão -->
+        <div class="card-top-bar">
+          <span class="bar-blue"></span>
+          <span class="bar-orange"></span>
+        </div>
+
+        <div class="card-body">
+          <h2 class="card-title">Acesse sua conta</h2>
+          <p class="card-subtitle">Coloque seu nome completo e turma para acessar.</p>
+
+          <!-- Formulário -->
+          <form action="/login/aluno" method="POST" class="login-form">
+            <div class="form-group">
+              <label for="nome" class="form-label">Nome</label>
+              <input 
+                type="text" 
+                id="nome" 
+                name="nome" 
+                class="form-input" 
+                placeholder="Digite seu nome:" 
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="turma" class="form-label">Turma</label>
+              <input 
+                type="text" 
+                id="turma" 
+                name="turma" 
+                class="form-input" 
+                placeholder="Digite sua turma:" 
+                required
+              >
+            </div>
+
+            <!-- Botão Entrar -->
+            <button type="submit" class="btn-primary">Entrar</button>
+
+            <!-- Botão Voltar (Embaixo de Entrar) -->
+            <a href="/" class="btn-back">
+              <i class="fa-solid fa-arrow-left"></i>
+              <span>Voltar</span>
+            </a>
+          </form>
+        </div>
+      </div>
+
+      <!-- Rodapé do lado direito -->
+      <div class="right-footer">
+        <span class="version-text">Portal de Atendimento v2.4.1</span>
+        <img src="/img/Logo_senac.png" alt="Senac" class="footer-logo">
+      </div>
+    </main>
+
+  </div>
+</body>
+</html>

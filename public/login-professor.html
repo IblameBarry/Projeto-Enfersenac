@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acesso Docente - Portal de Atendimento</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Fonte Inter (Google Fonts) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Ícones Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="layout-container">
+    
+    <!-- LADO ESQUERDO: APRESENTAÇÃO / ILUSTRAÇÃO -->
+    <aside class="left-panel">
+      <div class="left-content">
+        <!-- Logo Topo Esquerda -->
+        <header class="panel-header">
+          <img src="/img/logo_SenacF.png" alt="Senac Fecomércio" class="logo-top">
+        </header>
+
+        <!-- Títulos -->
+        <div class="panel-intro">
+          <h1 class="title">Portal de<br>Atendimento</h1>
+          <div class="divider-line"></div>
+          <p class="subtitle">
+            Sistema integrado para gestão de atendimentos em unidades de saúde Senac.
+          </p>
+        </div>
+
+        <!-- Ilustração do Prédio -->
+        <div class="illustration-wrapper">
+          <img src="/img/predio.png" alt="Unidade Senac" class="building-img">
+        </div>
+
+        <!-- Linhas decorativas e rodapé -->
+        <footer class="panel-footer">
+          <div class="accent-lines">
+            <span class="line-thick"></span>
+            <span class="line-thin"></span>
+          </div>
+          <p class="copyright">© 2025 Senac - Saúde e Bem-Estar</p>
+        </footer>
+      </div>
+    </aside>
+
+    <!-- LADO DIREITO: FORMULÁRIO DO PROFESSOR -->
+    <main class="right-panel">
+      <div class="card-login">
+        <!-- Barra colorida no topo do cartão -->
+        <div class="card-top-bar">
+          <span class="bar-blue"></span>
+          <span class="bar-orange"></span>
+        </div>
+
+        <div class="card-body">
+          <h2 class="card-title">Acesse sua conta</h2>
+          <p class="card-subtitle">Informe suas credenciais corporativas para continuar</p>
+
+          <!-- Formulário -->
+          <form action="/login/professor" method="POST" class="login-form">
+            
+            <!-- Campo de E-mail com Ícone -->
+            <div class="form-group">
+              <label for="email" class="form-label">E-mail corporativo</label>
+              <div class="input-icon-wrapper">
+                <i class="fa-regular fa-envelope field-icon"></i>
+                <input 
+                  type="email" 
+                  id="email" 
+                  name="email" 
+                  class="form-input with-icon" 
+                  placeholder="nome@senac.com.br" 
+                  required
+                >
+              </div>
+            </div>
+
+            <!-- Campo de Senha com Ícones e Esqueceu a Senha -->
+            <div class="form-group">
+              <div class="label-row">
+                <label for="senha" class="form-label">Senha</label>
+                <a href="/recuperar-senha" class="forgot-link">Esqueceu a senha?</a>
+              </div>
+              <div class="input-icon-wrapper">
+                <i class="fa-solid fa-lock field-icon"></i>
+                <input 
+                  type="password" 
+                  id="senha" 
+                  name="senha" 
+                  class="form-input with-icon with-action" 
+                  placeholder="••••••••" 
+                  required
+                >
+                <button type="button" class="btn-toggle-pass" id="togglePass" aria-label="Mostrar ou ocultar senha">
+                  <i class="fa-regular fa-eye" id="eyeIcon"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Botão Entrar -->
+            <button type="submit" class="btn-primary">Entrar</button>
+
+            <!-- Botão Voltar (Embaixo de Entrar) -->
+            <a href="/" class="btn-back">
+              <i class="fa-solid fa-arrow-left"></i>
+              <span>Voltar</span>
+            </a>
+
+            <!-- Badge de Conexão Segura -->
+            <div class="security-badge">
+              <i class="fa-solid fa-shield-halved"></i>
+              <span>Conexão segura · SSL/TLS 256-bit</span>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Rodapé do lado direito -->
+      <div class="right-footer">
+        <span class="version-text">Portal de Atendimento v2.4.1</span>
+        <img src="/img/Logo_senac.png" alt="Senac" class="footer-logo">
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Script simples para alternar o mostrar/esconder da senha -->
+  <script>
+    const toggleBtn = document.getElementById('togglePass');
+    const passInput = document.getElementById('senha');
+    const eyeIcon = document.getElementById('eyeIcon');
+
+    toggleBtn.addEventListener('click', () => {
+      const isPassword = passInput.type === 'password';
+      passInput.type = isPassword ? 'text' : 'password';
+      eyeIcon.classList.toggle('fa-eye', !isPassword);
+      eyeIcon.classList.toggle('fa-eye-slash', isPassword);
+    });
+  </script>
+</body>
+</html>

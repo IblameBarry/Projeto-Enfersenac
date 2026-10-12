@@ -1,0 +1,525 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+  background-color: #f1f5f9;
+  color: #1e293b;
+  min-height: 100vh;
+}
+
+.dashboard-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ============================================================
+   NAVBAR TOPO
+============================================================ */
+.navbar {
+  background: #002b54;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.nav-logo {
+  height: 38px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+.nav-divider {
+  width: 1px;
+  height: 26px;
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.nav-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-meta {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+
+.user-name {
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.user-email {
+  color: #94a3b8;
+  font-size: 0.72rem;
+}
+
+.user-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: #002b54;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.btn-logout {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 7px 14px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-logout:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* ============================================================
+   GRID PRINCIPAL (2 COLUNAS)
+============================================================ */
+.dashboard-container {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 430px 1fr;
+  gap: 24px;
+  padding: 28px 32px;
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.dash-card {
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-strip {
+  display: flex;
+  height: 4px;
+  width: 100%;
+}
+
+.strip-blue {
+  width: 65%;
+  background-color: #004d8d;
+}
+
+.strip-orange {
+  width: 35%;
+  background-color: #f39200;
+}
+
+.card-inner {
+  padding: 24px 26px;
+}
+
+.card-heading {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.card-subheading {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+/* ============================================================
+   COLUNA DA ESQUERDA: LISTAGEM DE ALUNOS
+============================================================ */
+.btn-back-dash {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #cbd5e1;
+  padding: 6px 14px;
+  border-radius: 6px;
+  color: #334155;
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  transition: all 0.2s;
+  width: fit-content;
+}
+
+.btn-back-dash:hover {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+}
+
+/* Filtros em Abas */
+.filter-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.filter-pill {
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-pill.active {
+  background: #f36c1b;
+  border-color: #f36c1b;
+  color: #ffffff;
+}
+
+/* Container da Lista */
+.answers-list-container {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.list-header-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  background: #f8fafc;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #64748b;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.col-head-aluno { flex: 1; }
+.col-head-enviada { width: 90px; text-align: right; margin-right: 14px; }
+.col-head-status { width: 80px; text-align: center; }
+
+.answer-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.answer-item:last-child {
+  border-bottom: none;
+}
+
+.answer-item:hover {
+  background: #f8fafc;
+}
+
+.answer-item.selected {
+  background: #f0f7ff;
+}
+
+.student-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.av-blue { background: #e0f2fe; color: #0284c7; }
+.av-orange { background: #ffedd5; color: #ea580c; }
+.av-gray { background: #f1f5f9; color: #64748b; }
+.av-orange-light { background: #fef3c7; color: #d97706; }
+
+.student-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.student-name {
+  font-size: 0.82rem;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.student-doc {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.meta-date {
+  font-size: 0.72rem;
+  color: #64748b;
+  width: 90px;
+  text-align: right;
+  margin-right: 14px;
+}
+
+/* Badges de Status */
+.status-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 12px;
+  width: 80px;
+  text-align: center;
+}
+
+.badge-selected { background: #dbeafe; color: #1e40af; }
+.badge-unread { background: #ffedd5; color: #c2410c; }
+.badge-read { background: #f1f5f9; color: #64748b; }
+.badge-pending { background: #fef3c7; color: #b45309; }
+
+/* ============================================================
+   COLUNA DA DIREITA: PRONTUÁRIO & FEEDBACK
+============================================================ */
+.meta-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.meta-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.meta-lbl {
+  font-size: 0.7rem;
+  color: #64748b;
+  margin-bottom: 2px;
+}
+
+.meta-val {
+  font-size: 0.82rem;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+/* Card do Prontuário */
+.prontuario-container {
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 18px 20px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.prontuario-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 10px;
+}
+
+.prontuario-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.prontuario-tag {
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.clinical-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.clinical-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.clinical-box.full-width {
+  width: 100%;
+}
+
+.clinical-lbl {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.clinical-txt {
+  font-size: 0.8rem;
+  color: #334155;
+  line-height: 1.4;
+}
+
+.clinical-txt.bold {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* Caixa de Feedback do Professor */
+.feedback-container {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: #f8fafc;
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.feedback-lbl {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.feedback-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: #475569;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  outline: none;
+  resize: vertical;
+}
+
+/* Botões Inferiores */
+.feedback-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-cancel {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+  background: #f1f5f9;
+}
+
+.btn-submit-feedback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: #f36c1b;
+  color: #ffffff;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(243, 108, 27, 0.25);
+  transition: all 0.2s;
+}
+
+.btn-submit-feedback:hover {
+  background: #e05b0a;
+}
+
+/* ============================================================
+   RODAPÉ
+============================================================ */
+.dashboard-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px;
+  font-size: 0.72rem;
+  color: #64748b;
+  border-top: 1px solid #e2e8f0;
+  background-color: #ffffff;
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+  .dashboard-container {
+    grid-template-columns: 1fr;
+  }
+}

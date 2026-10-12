@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal do Professor - Senac</title>
+  <link rel="stylesheet" href="dashboard-professor.css">
+  <!-- Fonte Inter (Google Fonts) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Ícones Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="dashboard-wrapper">
+
+    <!-- CABEÇALHO SUPERIOR (NAVBAR) -->
+    <header class="navbar">
+      <div class="navbar-left">
+        <img src="/img/logo_SenacF.png" alt="Senac" class="nav-logo">
+        <span class="nav-divider"></span>
+        <h1 class="nav-title">Portal do Professor</h1>
+      </div>
+
+      <div class="navbar-right">
+        <div class="user-profile">
+          <div class="user-meta">
+            <span class="user-name" id="profNome">Prof. Carlos Souza</span>
+            <span class="user-email" id="profEmail">prof.carlos@senac.br</span>
+          </div>
+          <!-- Avatar do Docente -->
+          <div class="user-avatar">
+            <i class="fa-solid fa-user-tie"></i>
+          </div>
+        </div>
+
+        <a href="/" class="btn-logout" title="Sair da conta">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          <span>Sair</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL (GRID COM 2 COLUNAS) -->
+    <main class="dashboard-container">
+      
+      <!-- COLUNA DA ESQUERDA: FORMULÁRIO DE PUBLICAÇÃO -->
+      <section class="dash-card form-section">
+        <!-- Faixa superior decorativa azul/laranja -->
+        <div class="card-strip">
+          <span class="strip-blue"></span>
+          <span class="strip-orange"></span>
+        </div>
+
+        <div class="card-inner">
+          <h2 class="card-heading">Publicar Nova História</h2>
+          <p class="card-subheading">Crie um novo enunciado ou gancho de história para que seus alunos continuem.</p>
+
+          <form action="/historias/publicar" method="POST" class="story-form">
+            <div class="form-item">
+              <label for="titulo" class="input-label">Título da História</label>
+              <input 
+                type="text" 
+                id="titulo" 
+                name="titulo" 
+                class="dash-input" 
+                placeholder="Ex: O Mistério do Casarão Abandonado" 
+                required
+              >
+            </div>
+
+            <div class="form-item">
+              <label for="conteudo" class="input-label">Conteúdo / Enunciado da História</label>
+              <textarea 
+                id="conteudo" 
+                name="conteudo" 
+                class="dash-textarea" 
+                rows="6" 
+                placeholder="Escreva o início da história que inspirará os alunos..." 
+                required
+              ></textarea>
+            </div>
+
+            <div class="form-item">
+              <label for="expiracao" class="input-label">Data de Expiração</label>
+              <div class="date-input-wrapper">
+                <input 
+                  type="date" 
+                  id="expiracao" 
+                  name="expiracao" 
+                  class="dash-input date-field" 
+                  required
+                >
+                <i class="fa-regular fa-calendar field-cal-icon"></i>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary-publish">Publicar História</button>
+              <!-- Ligação para o ecrã de respostas dos alunos -->
+              <a href="/dashboard-professor/respostas" class="btn-secondary-answers">Ver respostas</a>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- COLUNA DA DIREITA: LISTAGEM DE HISTÓRIAS -->
+      <section class="dash-card table-section">
+        <!-- Faixa superior decorativa azul/laranja -->
+        <div class="card-strip">
+          <span class="strip-blue"></span>
+          <span class="strip-orange"></span>
+        </div>
+
+        <div class="card-inner flex-column">
+          <h2 class="card-heading">Histórias Publicadas</h2>
+          <p class="card-subheading">Gerencie as atividades enviadas por você para as suas turmas.</p>
+
+          <!-- Tabela com Cabeçalho -->
+          <div class="table-container">
+            <table class="stories-table">
+              <thead>
+                <tr>
+                  <th style="width: 32%;">Título</th>
+                  <th style="width: 18%;">Publicação</th>
+                  <th style="width: 18%;">Expiração</th>
+                  <th style="width: 12%;">Respostas</th>
+                  <th style="width: 10%;">Status</th>
+                  <th style="width: 10%; text-align: right;">Ações</th>
+                </tr>
+              </thead>
+            </table>
+
+            <!-- Estado Vazio (Sem histórias ainda) -->
+            <div class="empty-state">
+              <div class="empty-icon-box">
+                <i class="fa-regular fa-folder-open"></i>
+              </div>
+              <p class="empty-text">Nenhuma história publicada ainda. Use o formulário ao lado para começar.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- RODAPÉ -->
+    <footer class="dashboard-footer">
+      <span>© 2025 Senac - Educação Profissionalizante para o Comércio</span>
+      <span>Portal do Professor v1.1.0</span>
+    </footer>
+
+  </div>
+
+  <!-- Script para receber o nome e e-mail da URL dinamicamente -->
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const email = params.get('email');
+    const nome = params.get('nome');
+
+    if (email) {
+      document.getElementById('profEmail').textContent = email;
+    }
+
+    if (nome) {
+      document.getElementById('profNome').textContent = nome;
+    } else if (email) {
+      const parteNome = email.split('@')[0].replace(/[._]/g, ' ');
+      const nomeFormatado = parteNome.replace(/\b\w/g, l => l.toUpperCase());
+      document.getElementById('profNome').textContent = 'Prof. ' + nomeFormatado;
+    }
+  </script>
+</body>
+</html>

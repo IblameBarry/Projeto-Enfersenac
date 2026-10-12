@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prontuário de Triagem - Senac</title>
+  
+  <link rel="stylesheet" href="/prontuario-aluno.css">
+  
+  <!-- Fonte Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Ícones Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="prontuario-page">
+
+    <!-- CONTAINER CENTRALIZADO -->
+    <main class="page-container">
+
+      <!-- ==========================================
+           CARD 1: CASO CLÍNICO / HISTÓRIA DO PACIENTE
+      =========================================== -->
+      <section class="dash-card caso-clinico-card">
+        <div class="card-strip">
+          <span class="strip-blue"></span>
+          <span class="strip-orange"></span>
+        </div>
+
+        <div class="card-inner">
+          <div class="caso-header">
+            <div class="caso-title-wrap">
+              <i class="fa-regular fa-clipboard caso-icon"></i>
+              <h2 class="caso-title">Caso Clínico / História do Paciente</h2>
+            </div>
+            <span class="caso-id">ID: #NUR-3024</span>
+          </div>
+
+          <p class="caso-text">
+            Paciente M.J.S, 48 anos, sexo feminino, comparece ao ambulatório queixando-se de cefaleia occipital constante de intensidade moderada (6/10) e dores lombares persistentes após turnos laborais de 8 horas em indústria têxtil (operadora de tear). Relata diagnóstico prévio de hipertensão arterial sistêmica, fazendo uso irregular de hidroclorotiazida. Refere antecedente familiar de diabetes mellitus (mãe). Ao exame físico: lúcida, orientada no tempo e espaço, normocorada. Dados vitais: PA 150/95 mmHg, FC 82 bpm, FR 18 irpm, Temp 36.5 °C. Relata uso diário de EPIs obrigatórios (máscara e protetor auricular), porém queixa-se de desconforto lombar contínuo devido ao tempo prolongado em pé.
+          </p>
+
+          <div class="alerta-leitura">
+            <i class="fa-solid fa-triangle-exclamation alerta-icon"></i>
+            <span>Leia atentamente o caso clínico acima para o correto preenchimento do prontuário técnico abaixo.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           CARD 2: FORMULÁRIO DO PRONTUÁRIO
+      =========================================== -->
+      <section class="dash-card form-prontuario-card">
+        <div class="card-strip">
+          <span class="strip-blue"></span>
+          <span class="strip-orange"></span>
+        </div>
+
+        <div class="card-inner">
+
+          <!-- Cabeçalho do Prontuário -->
+          <div class="prontuario-top-header">
+            <div class="title-desc">
+              <h1 class="main-doc-title">PRONTUÁRIO DE TRIAGEM E CUIDADO DE FERIMENTO / LESÃO POR PRESSÃO</h1>
+              <p class="main-doc-sub">Formulário educacional para registro clínico, avaliação de lesão por pressão e orientações de cuidado de enfermagem.</p>
+            </div>
+
+            <div class="header-inputs-grid">
+              <div class="header-field">
+                <label>Data:</label>
+                <input type="text" placeholder="DD/MM/AAAA" class="input-head">
+              </div>
+              <div class="header-field">
+                <label>Nº:</label>
+                <input type="text" placeholder="Ex: 402/2026" class="input-head">
+              </div>
+              <div class="header-field">
+                <label>Turno:</label>
+                <input type="text" placeholder="Ex: Manhã" class="input-head">
+              </div>
+              <div class="header-field">
+                <label>Profissional:</label>
+                <input type="text" placeholder="Ex: Aluno(a) de Enfermagem" class="input-head">
+              </div>
+            </div>
+          </div>
+
+          <!-- Abas / Pills de Navegação Rápida -->
+          <div class="section-pills">
+            <button type="button" class="pill-btn">Triagem Inicial</button>
+            <button type="button" class="pill-btn active">Lesão por Pressão</button>
+            <button type="button" class="pill-btn">Medicação Aplicada</button>
+            <button type="button" class="pill-btn">Avaliação Clínica</button>
+          </div>
+
+          <!-- INÍCIO DO FORMULÁRIO -->
+          <form action="/prontuario/salvar" method="POST" id="formProntuario">
+            <input type="hidden" name="aluno_id" id="aluno_id">
+            <input type="hidden" name="historia_id" id="historia_id">
+
+            <!-- ETAPA 1: Identificação do Paciente -->
+            <fieldset class="form-section-block">
+              <legend class="section-legend">
+                <span class="legend-badge">1</span>
+                <span>Identificação do Paciente</span>
+              </legend>
+
+              <div class="grid-layout cols-4">
+                <div class="field-box span-2">
+                  <label class="lbl">Nome Completo do Paciente</label>
+                  <input type="text" name="paciente_nome" class="inp" placeholder="Ex: Maria José de Souza">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Telefone de Contato</label>
+                  <input type="text" name="paciente_tel" class="inp" placeholder="(XX) XXXXX-XXXX">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Data de Nascimento</label>
+                  <input type="text" name="paciente_nasc" class="inp" placeholder="DD/MM/AAAA">
+                </div>
+              </div>
+
+              <div class="grid-layout cols-4 mt-12">
+                <div class="field-box">
+                  <label class="lbl">Documento de Identidade (RG)</label>
+                  <input type="text" name="paciente_rg" class="inp" placeholder="XX.XXX.XXX-X">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">CTPS / Série</label>
+                  <input type="text" name="paciente_ctps" class="inp" placeholder="Ex: 12345 / 001-SP">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Idade</label>
+                  <input type="text" name="paciente_idade" class="inp" placeholder="Ex: 48">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Sexo</label>
+                  <input type="text" name="paciente_sexo" class="inp" placeholder="Feminino">
+                </div>
+              </div>
+
+              <div class="grid-layout cols-4 mt-12">
+                <div class="field-box">
+                  <label class="lbl">Cor/Etnia</label>
+                  <input type="text" name="paciente_etnia" class="inp" placeholder="Branca">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Estado Civil</label>
+                  <input type="text" name="paciente_civil" class="inp" placeholder="Solteiro/Casado...">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Função / Cargo</label>
+                  <input type="text" name="paciente_cargo" class="inp" placeholder="Ex: Operadora de Tear">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Empresa Contratante</label>
+                  <input type="text" name="paciente_empresa" class="inp" placeholder="Ex: Tecelagem Fio de Ouro Ltda">
+                </div>
+              </div>
+
+              <div class="grid-layout cols-2 mt-12">
+                <div class="field-box">
+                  <label class="lbl">Cidade / UF</label>
+                  <input type="text" name="paciente_cidade" class="inp" placeholder="Ex: São Paulo / SP">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Setor de Atuação</label>
+                  <input type="text" name="paciente_setor" class="inp" placeholder="Ex: Produção / Linha de Montagem">
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- ETAPA 2: Triagem Inicial e Sinais Vitais -->
+            <fieldset class="form-section-block">
+              <legend class="section-legend">
+                <span class="legend-badge">2</span>
+                <span>Triagem Inicial e Sinais Vitais</span>
+              </legend>
+
+              <div class="grid-layout cols-6">
+                <div class="field-box span-2">
+                  <label class="lbl">Queixa Principal</label>
+                  <input type="text" name="queixa_principal" class="inp" placeholder="Ex: Dor localizada, edema, sensibilidade">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">PA</label>
+                  <input type="text" name="sinal_pa" class="inp" placeholder="Ex: 120/80 mmHg">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">FC</label>
+                  <input type="text" name="sinal_fc" class="inp" placeholder="Ex: 82 bpm">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">FR</label>
+                  <input type="text" name="sinal_fr" class="inp" placeholder="Ex: 18 irpm">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Temp</label>
+                  <input type="text" name="sinal_temp" class="inp" placeholder="Ex: 36.5 °C">
+                </div>
+              </div>
+
+              <div class="grid-layout cols-6 mt-12">
+                <div class="field-box">
+                  <label class="lbl">SpO2</label>
+                  <input type="text" name="sinal_spo2" class="inp" placeholder="Ex: 98%">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">O2 Suplementar</label>
+                  <input type="text" name="sinal_o2" class="inp" placeholder="Ex: Não / 2 L/min">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Glicemia Capilar</label>
+                  <input type="text" name="sinal_glicemia" class="inp" placeholder="Ex: 120 mg/dL">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Escala de Dor</label>
+                  <input type="text" name="sinal_dor" class="inp" placeholder="Ex: 6/10">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Consciência</label>
+                  <input type="text" name="sinal_consciencia" class="inp" placeholder="Ex: Lúcido / Orientado">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Mobilidade</label>
+                  <input type="text" name="sinal_mobilidade" class="inp" placeholder="Ex: Preservada / Comprometida">
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- ETAPA 3: Avaliação de Ferimento / Lesão por Pressão -->
+            <fieldset class="form-section-block">
+              <legend class="section-legend">
+                <span class="legend-badge">3</span>
+                <span>Avaliação de Ferimento / Lesão por Pressão</span>
+              </legend>
+
+              <div class="grid-layout cols-5">
+                <div class="field-box span-2">
+                  <label class="lbl">Localização</label>
+                  <input type="text" name="lesao_local" class="inp" placeholder="Ex: Sacro / Calcâneo / Trocânter">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Data de Início</label>
+                  <input type="text" name="lesao_inicio" class="inp" placeholder="Ex: DD/MM/AAAA">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Estadiamento</label>
+                  <input type="text" name="lesao_estadio" class="inp" placeholder="Ex: Estágio I / II /...">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Tamanho</label>
+                  <input type="text" name="lesao_tamanho" class="inp" placeholder="Ex: 4 x 5 cm">
+                </div>
+              </div>
+
+              <div class="grid-layout cols-4 mt-12">
+                <div class="field-box">
+                  <label class="lbl">Cor da Base</label>
+                  <input type="text" name="lesao_cor" class="inp" placeholder="Ex: Rosa / Amarelada...">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Sinais de Infecção</label>
+                  <input type="text" name="lesao_infeccao" class="inp" placeholder="Ex: Eritema / Supuração / Odor">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Exsudato</label>
+                  <input type="text" name="lesao_exsudato" class="inp" placeholder="Ex: Seroso / Purulento">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Debridamento</label>
+                  <input type="text" name="lesao_debridamento" class="inp" placeholder="Ex: Realizado / Pendente">
+                </div>
+              </div>
+
+              <div class="field-box mt-12">
+                <label class="lbl">Cobertura</label>
+                <input type="text" name="lesao_cobertura" class="inp" placeholder="Ex: Curativo / Bandagem / Gel">
+              </div>
+
+              <div class="field-box mt-12">
+                <label class="lbl">Observação Clínica da Lesão</label>
+                <textarea name="lesao_obs" class="inp-area" rows="3" placeholder="Descreva a presença de necrose, odor, secreção, dor à palpação e limitações funcionais."></textarea>
+              </div>
+            </fieldset>
+
+            <!-- ETAPA 4: Medicação Aplicada / Prescrita -->
+            <fieldset class="form-section-block">
+              <legend class="section-legend">
+                <span class="legend-badge">4</span>
+                <span>Medicação Aplicada / Prescrita</span>
+              </legend>
+
+              <div class="grid-layout cols-5">
+                <div class="field-box">
+                  <label class="lbl">Medicação</label>
+                  <input type="text" name="med_nome" class="inp" placeholder="Ex: Antibiótico tópico / Analgésico">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Via de Administração</label>
+                  <input type="text" name="med_via" class="inp" placeholder="Ex: Tópica / Oral">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Dosagem</label>
+                  <input type="text" name="med_dose" class="inp" placeholder="Ex: 1 comprimido...">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Frequência</label>
+                  <input type="text" name="med_freq" class="inp" placeholder="Ex: 2x ao dia">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Responsável</label>
+                  <input type="text" name="med_resp" class="inp" placeholder="Ex: Enfermeiro / Médico">
+                </div>
+              </div>
+
+              <div class="field-box mt-12">
+                <label class="lbl">Observação da Medicação</label>
+                <textarea name="med_obs" class="inp-area" rows="2" placeholder="Registre reações adversas, horário da última dose e orientações de continuidade."></textarea>
+              </div>
+            </fieldset>
+
+            <!-- ETAPA 5: Avaliação Clínica e Conduta -->
+            <fieldset class="form-section-block">
+              <legend class="section-legend">
+                <span class="legend-badge">5</span>
+                <span>Avaliação Clínica e Conduta</span>
+              </legend>
+
+              <div class="grid-layout cols-4">
+                <div class="field-box">
+                  <label class="lbl">Diagnóstico de Enfermagem</label>
+                  <input type="text" name="conduta_diagnostico" class="inp" placeholder="Ex: Risco de infecção / Dor crônica">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Intervenção Prioritária</label>
+                  <input type="text" name="conduta_intervencao" class="inp" placeholder="Ex: Limpeza / Curativo / Repouso">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Próxima Avaliação</label>
+                  <input type="text" name="conduta_proxima" class="inp" placeholder="Ex: 24h / 48h">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Encaminhamento</label>
+                  <input type="text" name="conduta_encaminhamento" class="inp" placeholder="Ex: Médico / Fisioterapia">
+                </div>
+              </div>
+
+              <div class="field-box mt-12">
+                <label class="lbl">Conclusão da Avaliação Clínica</label>
+                <textarea name="conduta_conclusao" class="inp-area" rows="2" placeholder="Registre evolução clínica, adesão ao tratamento e necessidade de reavaliação."></textarea>
+              </div>
+            </fieldset>
+
+            <!-- ETAPA 6: Responsabilidade e Encerramento -->
+            <fieldset class="form-section-block">
+              <legend class="section-legend">
+                <span class="legend-badge">6</span>
+                <span>Responsabilidade e Encerramento</span>
+              </legend>
+
+              <div class="checkbox-group">
+                <label class="custom-check-lbl">
+                  <input type="checkbox" name="termo_anamnese" checked>
+                  <span>Declaro que realizei a anamnese clínica respeitando os critérios éticos de enfermagem e as orientações docentes.</span>
+                </label>
+                <label class="custom-check-lbl">
+                  <input type="checkbox" name="termo_registro" checked>
+                  <span>Responsabilizo-me pelo registro clínico e pela comunicação das alterações ao paciente e à equipe assistencial.</span>
+                </label>
+              </div>
+
+              <div class="grid-layout cols-2 mt-16">
+                <div class="field-box">
+                  <label class="lbl">Assinatura do Aluno</label>
+                  <input type="text" name="assinatura_aluno" class="inp" placeholder="Ex: João Silva">
+                </div>
+                <div class="field-box">
+                  <label class="lbl">Assinatura do Professor</label>
+                  <input type="text" name="assinatura_prof" class="inp" placeholder="Ex: Nome do Professor">
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- BOTÕES DE AÇÃO INFERIORES DO FORMULÁRIO -->
+            <div class="form-bottom-actions">
+              <button type="button" class="btn-rascunho">
+                <i class="fa-regular fa-floppy-disk"></i>
+                <span>Salvar Rascunho</span>
+              </button>
+
+              <button type="submit" class="btn-enviar-prontuario">
+                <i class="fa-solid fa-paper-plane"></i>
+                <span>Enviar Prontuário ao Professor</span>
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ==========================================
+         BARRA FIXA INFERIOR (FOOTER / DOCK)
+    =========================================== -->
+    <footer class="footer-dock">
+      <div class="footer-left">
+        <img src="/img/logo_SenacF.png" alt="Senac" class="dock-logo">
+        <span class="dock-title">Portal de Atendimento</span>
+        <a href="/portal-aluno" class="dock-btn-back">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Voltar às histórias</span>
+        </a>
+      </div>
+
+      <div class="footer-right">
+        <div class="dock-user-info">
+          <span class="dock-user-name" id="dockNome">Aluno: João Silva</span>
+          <span class="dock-user-turma" id="dockTurma">Turma: Técnico em Enfermagem - Cohorte B</span>
+        </div>
+        <a href="/" class="dock-btn-logout">Sair</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- SCRIPT PARA PEGAR DADOS DA URL -->
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const nome = params.get('nome');
+    const turma = params.get('turma');
+    const alunoId = params.get('id') || params.get('aluno_id');
+    const historiaId = params.get('historia_id');
+
+    document.getElementById('aluno_id').value = alunoId || '';
+    document.getElementById('historia_id').value = historiaId || '';
+
+    if (nome) document.getElementById('dockNome').textContent = 'Aluno: ' + nome;
+    if (turma) document.getElementById('dockTurma').textContent = 'Turma: ' + turma;
+
+    document.getElementById('formProntuario').addEventListener('submit', (event) => {
+      if (!document.getElementById('aluno_id').value || !document.getElementById('historia_id').value) {
+        event.preventDefault();
+        alert('Não foi possível identificar o aluno ou a história. Volte ao portal e selecione a história novamente.');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prontuário Enviado com Sucesso - Senac</title>
+  
+  <link rel="stylesheet" href="/sucesso-envio.css">
+  
+  <!-- Fonte Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="success-page-wrapper">
+
+    <!-- NAVBAR TOPO -->
+    <header class="navbar">
+      <div class="navbar-left">
+        <img src="/img/logo_SenacF.png" alt="Senac" class="nav-logo">
+        <span class="nav-divider"></span>
+        <h1 class="nav-title">Portal de Atendimento</h1>
+      </div>
+
+      <div class="navbar-right">
+        <a href="/" class="btn-logout" title="Sair da conta">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          <span>Sair</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- ÁREA CENTRAL DO CARD -->
+    <main class="success-container">
+      <div class="dash-card success-card">
+        <!-- Barra colorida no topo do cartão -->
+        <div class="card-strip">
+          <span class="strip-blue"></span>
+          <span class="strip-orange"></span>
+        </div>
+
+        <div class="card-inner">
+          <!-- Ícone de Sucesso -->
+          <div class="success-icon-wrapper">
+            <div class="icon-circle">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+          </div>
+
+          <h2 class="success-title">Prontuário Enviado com Sucesso!</h2>
+          <p class="success-description">
+            Sua atividade clínica foi submetida com sucesso e já está disponível para visualização e avaliação do docente responsável.
+          </p>
+
+          <!-- Resumo informativo do Envio -->
+          <div class="receipt-box">
+            <div class="receipt-row">
+              <span class="receipt-lbl">Protocolo:</span>
+              <strong class="receipt-val">#PRONT-2026-0482</strong>
+            </div>
+            <div class="receipt-row">
+              <span class="receipt-lbl">Status da Atividade:</span>
+              <span class="status-badge badge-pending">Aguardando Avaliação</span>
+            </div>
+            <div class="receipt-row">
+              <span class="receipt-lbl">Data do Envio:</span>
+              <strong class="receipt-val" id="dataEnvio">Hoje</strong>
+            </div>
+          </div>
+
+          <!-- Ações -->
+          <div class="success-actions">
+            <a href="/portal-aluno" class="btn-primary-back">
+              <i class="fa-solid fa-arrow-left"></i>
+              <span>Voltar para o Portal do Aluno</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- RODAPÉ -->
+    <footer class="footer-bottom">
+      <span>© 2025 Senac - Educação Profissionalizante para o Comércio</span>
+      <span>Portal do Aluno v1.1.0</span>
+    </footer>
+
+  </div>
+
+  <script>
+    // Coloca a data e hora formatada
+    const agora = new Date();
+    const dataFormatada = agora.toLocaleDateString('pt-BR') + ' às ' + agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    document.getElementById('dataEnvio').textContent = dataFormatada;
+  </script>
+</body>
+</html>

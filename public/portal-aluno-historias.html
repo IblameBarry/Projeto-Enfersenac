@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal do Aluno - Senac</title>
+  
+  <!-- CSS Separado -->
+  <link rel="stylesheet" href="/portal-aluno-historias.css">
+
+  <!-- Fonte Inter (Google Fonts) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Ícones Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="portal-wrapper">
+
+    <!-- BARRA SUPERIOR (NAVBAR) -->
+    <header class="navbar">
+      <div class="navbar-left">
+        <img src="/img/logo_SenacF.png" alt="Senac" class="nav-logo">
+        <span class="nav-divider"></span>
+        <h1 class="nav-title">Portal do Aluno</h1>
+      </div>
+
+      <div class="navbar-right">
+        <div class="user-profile">
+          <div class="user-meta">
+            <span class="user-name" id="alunoNome">João Silva</span>
+            <span class="user-turma" id="alunoTurma">Turma: Informática para Internet</span>
+          </div>
+        </div>
+
+        <a href="/" class="btn-logout" title="Sair da conta">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          <span>Sair</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- ÁREA DE CONTEÚDO PRINCIPAL -->
+    <main class="portal-container">
+
+      <!-- BANNER DE BOAS-VINDAS SUPERIOR -->
+      <section class="dash-card welcome-card">
+        <div class="card-strip">
+          <span class="strip-blue"></span>
+          <span class="strip-orange"></span>
+        </div>
+        <div class="card-inner welcome-content">
+          <h2 class="welcome-heading">Olá, <span id="welcomeNome">João</span>! Escolha como quer continuar sua história.</h2>
+        </div>
+      </section>
+
+      <!-- CARTÃO PRINCIPAL: ESCOLHA DA HISTÓRIA -->
+      <section class="dash-card main-card">
+        <div class="card-strip">
+          <span class="strip-blue"></span>
+          <span class="strip-orange"></span>
+        </div>
+
+        <div class="card-inner">
+          <h2 class="card-heading">Escolha sua história</h2>
+          <p class="card-subheading">Selecione uma opção para continuar sua atividade.</p>
+
+          <!-- TABELA DE HISTÓRIAS -->
+          <div class="table-wrapper">
+            <table class="stories-table">
+              <thead>
+                <tr>
+                  <th style="width: 38%;">Tipo de história</th>
+                  <th style="width: 18%;">Origem</th>
+                  <th style="width: 22%;">Experiência</th>
+                  <th style="width: 12%;">Status</th>
+                  <th style="width: 10%; text-align: right;">Ação</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Linha 1: História Aleatória -->
+                <tr>
+                  <td><strong class="row-title">História Aleatória</strong></td>
+                  <td class="row-text">Sistema</td>
+                  <td class="row-text">Desafio surpresa</td>
+                  <td><span class="tag-badge badge-orange">Aleatória</span></td>
+                  <td style="text-align: right;">
+                    <a href="/aluno/historia-aleatoria" class="action-link">Escolher</a>
+                  </td>
+                </tr>
+
+                <!-- Linha 2: História do Professor -->
+                <tr>
+                  <td><strong class="row-title">História do Professor</strong></td>
+                  <td class="row-text">Professor</td>
+                  <td class="row-text">Atividade guiada</td>
+                  <td><span class="tag-badge badge-blue">Guiada</span></td>
+                  <td style="text-align: right;">
+                    <a href="/aluno/historia-professor" class="action-link">Escolher</a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- BLOCOS INFORMATIVOS INFERIORES -->
+          <div class="info-grid">
+            <!-- Bloco 1: Detalhes História Aleatória -->
+            <div class="info-box">
+              <h3 class="info-title">História Aleatória</h3>
+              <ul class="info-list">
+                <li>Receba uma história surpresa do sistema.</li>
+                <li>Ideal para explorar novos cenários e desafios.</li>
+                <li>Sem orientação prévia do professor.</li>
+              </ul>
+            </div>
+
+            <!-- Bloco 2: Detalhes História do Professor -->
+            <div class="info-box">
+              <h3 class="info-title">História do Professor</h3>
+              <ul class="info-list">
+                <li>Acompanhe uma história proposta pelo professor.</li>
+                <li>Conteúdo alinhado ao plano de aula.</li>
+                <li>Recomendado para atividades guiadas.</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- SCRIPT PARA CARREGAR OS DADOS DO ALUNO A PARTIR DA URL -->
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const nome = params.get('nome');
+    const turma = params.get('turma');
+    const alunoId = params.get('id') || params.get('aluno_id');
+
+    if (nome) {
+      document.getElementById('alunoNome').textContent = nome;
+      // Primeiro nome para a saudação
+      const primeiroNome = nome.trim().split(' ')[0];
+      document.getElementById('welcomeNome').textContent = primeiroNome;
+    }
+
+    if (turma) {
+      document.getElementById('alunoTurma').textContent = 'Turma: ' + turma;
+    }
+
+    // Passa o ID real do aluno e da história selecionada para o prontuário.
+    document.querySelectorAll('a[href="/aluno/historia-professor"], a[href="/aluno/historia-aleatoria"]').forEach((link) => {
+      link.addEventListener('click', async (event) => {
+        event.preventDefault();
+        if (!alunoId) {
+          alert('Não foi possível identificar seu cadastro. Faça login novamente.');
+          return;
+        }
+        try {
+          const query = new URLSearchParams({ id: alunoId });
+          if (turma) query.set('turma', turma);
+          const response = await fetch('/api/historias' + (turma ? '?turma=' + encodeURIComponent(turma) : ''));
+          if (!response.ok) throw new Error('Falha ao buscar histórias');
+          const historias = await response.json();
+          if (!historias.length) {
+            alert('Não há histórias disponíveis no momento.');
+            return;
+          }
+          let historia;
+          if (link.href.includes('historia-aleatoria')) {
+            historia = historias[Math.floor(Math.random() * historias.length)];
+            window.location.href = '/aluno/historia-aleatoria?' + query.toString() + '&historia_id=' + encodeURIComponent(historia.id);
+          } else {
+            historia = historias[0];
+            window.location.href = '/aluno/historia-professor?' + query.toString() + '&historia_id=' + encodeURIComponent(historia.id);
+          }
+        } catch (error) {
+          console.error(error);
+          alert('Não foi possível carregar as histórias. Tente novamente.');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

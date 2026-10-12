@@ -1,0 +1,487 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+  background-color: #f1f5f9;
+  color: #1e293b;
+  min-height: 100vh;
+}
+
+.prontuario-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Espaçamento para o conteúdo não ficar sob a barra fixa inferior */
+.page-container {
+  max-width: 1360px;
+  width: 100%;
+  margin: 24px auto 90px auto;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Base dos Cartões */
+.dash-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+.card-strip {
+  display: flex;
+  height: 4px;
+  width: 100%;
+}
+
+.strip-blue {
+  width: 65%;
+  background-color: #004d8d;
+}
+
+.strip-orange {
+  width: 35%;
+  background-color: #f39200;
+}
+
+.card-inner {
+  padding: 24px 28px;
+}
+
+/* ============================================================
+   CARD 1: CASO CLÍNICO
+============================================================ */
+.caso-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.caso-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.caso-icon {
+  font-size: 1.1rem;
+  color: #004d8d;
+}
+
+.caso-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.caso-id {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #004d8d;
+}
+
+.caso-text {
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: #334155;
+  margin-bottom: 14px;
+}
+
+.alerta-leitura {
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 10px 14px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.alerta-icon {
+  font-size: 0.85rem;
+  color: #2563eb;
+}
+
+/* ============================================================
+   CARD 2: HEADER DO PRONTUÁRIO
+============================================================ */
+.prontuario-top-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 16px;
+}
+
+.main-doc-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #002b54;
+  letter-spacing: -0.2px;
+  margin-bottom: 4px;
+}
+
+.main-doc-sub {
+  font-size: 0.72rem;
+  color: #64748b;
+  max-width: 600px;
+  line-height: 1.35;
+}
+
+.header-inputs-grid {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.header-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.input-head {
+  padding: 6px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background-color: #f8fafc;
+  font-size: 0.75rem;
+  outline: none;
+  min-width: 90px;
+}
+
+/* ============================================================
+   PILLS DE NAVEGAÇÃO
+============================================================ */
+.section-pills {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.pill-btn {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pill-btn:hover {
+  background-color: #f8fafc;
+}
+
+.pill-btn.active {
+  background-color: #fff7ed;
+  border-color: #f39200;
+  color: #c2410c;
+}
+
+/* ============================================================
+   SEÇÕES NUMERADAS (FIELDSETS)
+============================================================ */
+.form-section-block {
+  border: none;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 18px;
+  margin-bottom: 24px;
+}
+
+.section-legend {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.legend-badge {
+  background-color: #004d8d;
+  color: #ffffff;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+/* ============================================================
+   SISTEMA DE GRIDS E INPUTS
+============================================================ */
+.grid-layout {
+  display: grid;
+  gap: 12px;
+}
+
+.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.cols-4 { grid-template-columns: repeat(4, 1fr); }
+.cols-5 { grid-template-columns: repeat(5, 1fr); }
+.cols-6 { grid-template-columns: repeat(6, 1fr); }
+
+.span-2 { grid-column: span 2; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+
+.field-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lbl {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.inp, .inp-area {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  background-color: #f8fafc;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  color: #1e293b;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.inp::placeholder, .inp-area::placeholder {
+  color: #94a3b8;
+  font-size: 0.74rem;
+}
+
+.inp:focus, .inp-area:focus {
+  background-color: #ffffff;
+  border-color: #f39200;
+  box-shadow: 0 0 0 2px rgba(243, 146, 0, 0.15);
+}
+
+.inp-area {
+  resize: vertical;
+  line-height: 1.4;
+}
+
+/* Checkboxes da Etapa 6 */
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.custom-check-lbl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: #334155;
+  cursor: pointer;
+}
+
+.custom-check-lbl input[type="checkbox"] {
+  accent-color: #004d8d;
+  width: 15px;
+  height: 15px;
+}
+
+/* ============================================================
+   BOTÕES DE AÇÃO DO FORMULÁRIO
+============================================================ */
+.form-bottom-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.btn-rascunho {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #334155;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-rascunho:hover {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.btn-enviar-prontuario {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background-color: #f36c1b;
+  color: #ffffff;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(243, 108, 27, 0.25);
+  transition: all 0.2s;
+}
+
+.btn-enviar-prontuario:hover {
+  background-color: #e05b0a;
+  box-shadow: 0 6px 16px rgba(243, 108, 27, 0.35);
+}
+
+/* ============================================================
+   BARRA FIXA INFERIOR (FOOTER DOCK)
+============================================================ */
+.footer-dock {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #002b54;
+  color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 28px;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.dock-logo {
+  height: 28px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+.dock-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  padding-right: 16px;
+}
+
+.dock-btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: 0.78rem;
+  font-weight: 500;
+  transition: color 0.15s;
+}
+
+.dock-btn-back:hover {
+  color: #f39200;
+}
+
+.footer-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.dock-user-info {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+
+.dock-user-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.dock-user-turma {
+  font-size: 0.68rem;
+  color: #94a3b8;
+}
+
+.dock-btn-logout {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  padding: 5px 12px;
+  border-radius: 4px;
+  font-size: 0.74rem;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.dock-btn-logout:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ============================================================
+   RESPONSIVIDADE
+============================================================ */
+@media (max-width: 1024px) {
+  .cols-4, .cols-5, .cols-6 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .span-2 {
+    grid-column: span 1;
+  }
+  .prontuario-top-header {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 640px) {
+  .cols-2, .cols-4, .cols-5, .cols-6 {
+    grid-template-columns: 1fr;
+  }
+  .form-bottom-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .btn-rascunho, .btn-enviar-prontuario {
+    width: 100%;
+    justify-content: center;
+  }
+}

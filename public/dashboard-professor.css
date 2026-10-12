@@ -1,0 +1,382 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+  background-color: #f1f5f9;
+  color: #1e293b;
+  min-height: 100vh;
+}
+
+.dashboard-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ============================================================
+   NAVBAR (TOPO AZUL ESCURO)
+============================================================ */
+.navbar {
+  background: #002b54;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.nav-logo {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+  /* Remove qualquer sombra borrada estranha e dá nitidez */
+  filter: brightness(0) invert(1);
+}
+
+.nav-divider {
+  width: 1px;
+  height: 26px;
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.nav-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-meta {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+
+.user-name {
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.user-email {
+  color: #94a3b8;
+  font-size: 0.72rem;
+}
+
+.user-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: #002b54;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+}
+
+.btn-logout {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 7px 14px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-logout:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: #ffffff;
+}
+
+/* ============================================================
+   GRID PRINCIPAL (CARDS)
+============================================================ */
+.dashboard-container {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 24px;
+  padding: 28px 32px;
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.dash-card {
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Faixa superior bi-color */
+.card-strip {
+  display: flex;
+  height: 4px;
+  width: 100%;
+}
+
+.strip-blue {
+  width: 65%;
+  background-color: #004d8d;
+}
+
+.strip-orange {
+  width: 35%;
+  background-color: #f39200;
+}
+
+.card-inner {
+  padding: 26px 28px;
+}
+
+.card-inner.flex-column {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.card-heading {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.card-subheading {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 22px;
+  line-height: 1.4;
+}
+
+/* ============================================================
+   FORMULÁRIO (ESQUERDA)
+============================================================ */
+.story-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.input-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.dash-input, .dash-textarea {
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background-color: #f8fafc;
+  color: #1e293b;
+  font-size: 0.88rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.dash-textarea {
+  resize: vertical;
+  min-height: 130px;
+  line-height: 1.45;
+}
+
+.dash-input::placeholder, .dash-textarea::placeholder {
+  color: #94a3b8;
+  font-size: 0.82rem;
+}
+
+.dash-input:focus, .dash-textarea:focus {
+  background-color: #ffffff;
+  border-color: #f39200;
+  box-shadow: 0 0 0 3px rgba(243, 146, 0, 0.15);
+}
+
+.date-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.date-field {
+  padding-right: 38px;
+}
+
+.field-cal-icon {
+  position: absolute;
+  right: 14px;
+  color: #64748b;
+  pointer-events: none;
+  font-size: 0.95rem;
+}
+
+/* Botões do formulário */
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.btn-primary-publish {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background-color: #f36c1b;
+  color: #ffffff;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(243, 108, 27, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btn-primary-publish:hover {
+  background-color: #e05b0a;
+  box-shadow: 0 6px 14px rgba(243, 108, 27, 0.35);
+}
+
+.btn-secondary-answers {
+  width: 100%;
+  padding: 11px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #334155;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary-answers:hover {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+}
+
+/* ============================================================
+   TABELA / HISTÓRIAS (DIREITA)
+============================================================ */
+.table-container {
+  flex: 1;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
+}
+
+.stories-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.stories-table th {
+  background-color: #f8fafc;
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* Estado vazio */
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  background-color: #ffffff;
+}
+
+.empty-icon-box {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  font-size: 1.8rem;
+  margin-bottom: 16px;
+}
+
+.empty-text {
+  font-size: 0.85rem;
+  color: #64748b;
+  text-align: center;
+  max-width: 320px;
+  line-height: 1.5;
+}
+
+/* ============================================================
+   RODAPÉ
+============================================================ */
+.dashboard-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px;
+  font-size: 0.72rem;
+  color: #64748b;
+  border-top: 1px solid #e2e8f0;
+  background-color: #ffffff;
+}
+
+/* ============================================================
+   RESPONSIVIDADE
+============================================================ */
+@media (max-width: 1024px) {
+  .dashboard-container {
+    grid-template-columns: 1fr;
+  }
+}

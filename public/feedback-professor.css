@@ -1,0 +1,522 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+  background-color: #f1f5f9;
+  color: #1e293b;
+  min-height: 100vh;
+}
+
+.feedback-page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* NAVBAR */
+.navbar {
+  background: #002b54;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.nav-logo {
+  height: 38px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+.nav-divider {
+  width: 1px;
+  height: 26px;
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.nav-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-meta {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+
+.user-name {
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.user-email {
+  color: #94a3b8;
+  font-size: 0.72rem;
+}
+
+.user-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: #002b54;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.btn-logout {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 7px 14px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-logout:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* CONTAINER PRINCIPAL (GRID 2 COLUNAS) */
+.page-container {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 24px;
+  padding: 28px 32px;
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.dash-card {
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-strip {
+  display: flex;
+  height: 4px;
+  width: 100%;
+}
+
+.strip-blue {
+  width: 65%;
+  background-color: #004d8d;
+}
+
+.strip-orange {
+  width: 35%;
+  background-color: #f39200;
+}
+
+.card-inner {
+  padding: 26px 28px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* BOTÃO VOLTAR */
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #cbd5e1;
+  padding: 6px 14px;
+  border-radius: 6px;
+  color: #334155;
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  width: fit-content;
+  transition: all 0.2s;
+}
+
+.btn-back:hover {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.mt-10 {
+  margin-top: 14px;
+}
+
+.card-heading {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.card-subheading {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+/* PERFIL DO ALUNO */
+.student-profile-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.student-avatar-big {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #e0f2fe;
+  color: #0284c7;
+  font-size: 1.05rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.student-profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.student-profile-name {
+  font-size: 0.95rem;
+  color: #0f172a;
+}
+
+.student-profile-cohort {
+  font-size: 0.74rem;
+  color: #475569;
+}
+
+.student-profile-id {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+/* LISTA DE METADADOS */
+.info-list-box {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+}
+
+.lbl-info {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.val-info {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.status-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+.badge-pending {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+/* EXTRATO DO PRONTUÁRIO */
+.sub-block-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 12px;
+}
+
+.extract-box {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.extract-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.extract-lbl {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #004d8d;
+}
+
+.extract-txt {
+  font-size: 0.76rem;
+  color: #334155;
+  line-height: 1.4;
+  font-style: italic;
+}
+
+/* ============================================================
+   FORMULÁRIO DE FEEDBACK (DIREITA)
+============================================================ */
+.eval-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.rubric-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.rubric-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rubric-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  gap: 16px;
+}
+
+.rubric-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rubric-info strong {
+  font-size: 0.82rem;
+  color: #0f172a;
+}
+
+.rubric-info span {
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.select-score {
+  padding: 7px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background-color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #004d8d;
+  outline: none;
+  cursor: pointer;
+}
+
+/* CAIXA DE NOTA */
+.grade-input-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background-color: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+
+.grade-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #9a3412;
+}
+
+.input-grade {
+  width: 90px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #c2410c;
+  background: #ffffff;
+  border: 1px solid #f97316;
+  border-radius: 6px;
+  text-align: center;
+  outline: none;
+}
+
+/* ÁREA DE TEXTO DO FEEDBACK */
+.feedback-field-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.feedback-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background-color: #f8fafc;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: #1e293b;
+  outline: none;
+  resize: vertical;
+}
+
+.feedback-textarea:focus {
+  background-color: #ffffff;
+  border-color: #f39200;
+  box-shadow: 0 0 0 3px rgba(243, 146, 0, 0.15);
+}
+
+/* OPÇÕES */
+.options-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.custom-check-lbl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.76rem;
+  color: #334155;
+  cursor: pointer;
+}
+
+.custom-check-lbl input[type="checkbox"] {
+  accent-color: #004d8d;
+  width: 16px;
+  height: 16px;
+}
+
+/* BOTÕES DE AÇÃO INFERIORES */
+.form-bottom-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.btn-cancel {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+  background: #f1f5f9;
+}
+
+.btn-submit-feedback {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background-color: #f36c1b;
+  color: #ffffff;
+  padding: 11px 24px;
+  border-radius: 6px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(243, 108, 27, 0.25);
+  transition: all 0.2s;
+}
+
+.btn-submit-feedback:hover {
+  background-color: #e05b0a;
+}
+
+/* RODAPÉ */
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px;
+  font-size: 0.72rem;
+  color: #64748b;
+  border-top: 1px solid #e2e8f0;
+  background-color: #ffffff;
+}
+
+@media (max-width: 1024px) {
+  .page-container {
+    grid-template-columns: 1fr;
+  }
+}

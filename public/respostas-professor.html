@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Respostas dos Alunos - Portal do Professor</title>
+  
+  <!-- CSS Separado -->
+  <link rel="stylesheet" href="/respostas-professor.css">
+
+  <!-- Fonte Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Ícones Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="dashboard-wrapper">
+
+    <!-- CABEÇALHO (NAVBAR) -->
+    <header class="navbar">
+      <div class="navbar-left">
+        <img src="/img/logo_SenacF.png" alt="Senac" class="nav-logo">
+        <span class="nav-divider"></span>
+        <h1 class="nav-title">Portal do Professor</h1>
+      </div>
+
+      <div class="navbar-right">
+        <div class="user-profile">
+          <div class="user-meta">
+            <span class="user-name" id="profNome">Prof. Carlos Souza</span>
+            <span class="user-email" id="profEmail">prof.carlos@senac.br</span>
+          </div>
+          <div class="user-avatar">
+            <i class="fa-solid fa-user-tie"></i>
+          </div>
+        </div>
+
+        <a href="/" class="btn-logout" title="Sair da conta">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          <span>Sair</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL (GRID 2 COLUNAS) -->
+    <main class="dashboard-container">
+      
+      <!-- COLUNA DA ESQUERDA: LISTA DE ALUNOS -->
+      <section class="dash-card left-section">
+        <div class="card-strip">
+          <span class="strip-blue"></span>
+          <span class="strip-orange"></span>
+        </div>
+
+        <div class="card-inner">
+          <h2 class="card-heading">Respostas dos Alunos</h2>
+          <p class="card-subheading">Consulte os prontuários clínicos enviados para a história selecionada.</p>
+
+          <a href="/dashboard-professor" class="btn-back-dash">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Voltar</span>
+          </a>
+
+          <!-- Filtros -->
+          <div class="filter-tabs">
+            <button class="filter-pill active">Todas</button>
+            <button class="filter-pill">Não lidas</button>
+            <button class="filter-pill">Pendentes</button>
+          </div>
+
+          <!-- Tabela de Alunos -->
+          <div class="answers-list-container">
+            <div class="list-header-row">
+              <span class="col-head-aluno">Aluno</span>
+              <span class="col-head-enviada">Enviada</span>
+              <span class="col-head-status">Status</span>
+            </div>
+
+            <!-- Aluno 1 -->
+            <div class="answer-item selected">
+              <div class="student-avatar av-blue">AR</div>
+              <div class="student-info">
+                <strong class="student-name">Ana Ribeiro</strong>
+                <span class="student-doc">Prontuário clínico - DEMO-001</span>
+              </div>
+              <span class="meta-date">Hoje, 09:42</span>
+              <span class="status-badge badge-selected">Selecionada</span>
+            </div>
+
+            <!-- Aluno 2 -->
+            <div class="answer-item">
+              <div class="student-avatar av-orange">BM</div>
+              <div class="student-info">
+                <strong class="student-name">Bruno Martins</strong>
+                <span class="student-doc">Prontuário clínico - DEMO-002</span>
+              </div>
+              <span class="meta-date">Hoje, 08:15</span>
+              <span class="status-badge badge-unread">Não lida</span>
+            </div>
+
+            <!-- Aluno 3 -->
+            <div class="answer-item">
+              <div class="student-avatar av-gray">CM</div>
+              <div class="student-info">
+                <strong class="student-name">Camila Nunes</strong>
+                <span class="student-doc">Prontuário clínico - DEMO-003</span>
+              </div>
+              <span class="meta-date">Ontem, 18:30</span>
+              <span class="status-badge badge-read">Lida</span>
+            </div>
+
+            <!-- Aluno 4 -->
+            <div class="answer-item">
+              <div class="student-avatar av-orange-light">DS</div>
+              <div class="student-info">
+                <strong class="student-name">Diego Santos</strong>
+                <span class="student-doc">Prontuário clínico - DEMO-004</span>
+              </div>
+              <span class="meta-date">Ontem, 16:05</span>
+              <span class="status-badge badge-pending">Pendente</span>
+            </div>
+
+            <!-- Aluno 5 -->
+            <div class="answer-item">
+              <div class="student-avatar av-gray">EV</div>
+              <div class="student-info">
+                <strong class="student-name">Evelyn Costa</strong>
+                <span class="student-doc">Prontuário clínico - DEMO-005</span>
+              </div>
+              <span class="meta-date">12/05, 14:20</span>
+              <span class="status-badge badge-read">Lida</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- COLUNA DA DIREITA: VISUALIZAÇÃO DO PRONTUÁRIO -->
+      <section class="dash-card right-section">
+        <div class="card-strip">
+          <span class="strip-blue"></span>
+          <span class="strip-orange"></span>
+        </div>
+
+        <div class="card-inner">
+          <h2 class="card-heading">Visualização da Resposta</h2>
+          <p class="card-subheading">História selecionada: <strong>O Caso do Paciente com Dor Torácica.</strong></p>
+
+          <!-- Metadados -->
+          <div class="meta-cards-grid">
+            <div class="meta-box">
+              <span class="meta-lbl">Aluno</span>
+              <strong class="meta-val">Ana Ribeiro</strong>
+            </div>
+            <div class="meta-box">
+              <span class="meta-lbl">História</span>
+              <strong class="meta-val">O Caso do Paciente com Dor Torácica</strong>
+            </div>
+            <div class="meta-box">
+              <span class="meta-lbl">Enviada</span>
+              <strong class="meta-val">Hoje, 09:42</strong>
+            </div>
+          </div>
+
+          <!-- Prontuário Clínico -->
+          <div class="prontuario-container">
+            <div class="prontuario-header">
+              <span class="prontuario-title">Prontuário clínico de enfermagem</span>
+              <span class="prontuario-tag">DEMO-001</span>
+            </div>
+
+            <!-- Linha 1 -->
+            <div class="clinical-grid-3">
+              <div class="clinical-box">
+                <span class="clinical-lbl">Paciente</span>
+                <span class="clinical-txt bold">João Silva, 42 anos</span>
+              </div>
+              <div class="clinical-box">
+                <span class="clinical-lbl">Queixa principal</span>
+                <span class="clinical-txt bold">Dor torácica intensa</span>
+              </div>
+              <div class="clinical-box">
+                <span class="clinical-lbl">Sinais vitais</span>
+                <span class="clinical-txt bold">FC 112 bpm - PA 160/100 mmHg</span>
+              </div>
+            </div>
+
+            <!-- Linha 2 -->
+            <div class="clinical-grid-3">
+              <div class="clinical-box">
+                <span class="clinical-lbl">História pregressa</span>
+                <span class="clinical-txt bold">Hipertensão arterial</span>
+              </div>
+              <div class="clinical-box">
+                <span class="clinical-lbl">Medicação atual</span>
+                <span class="clinical-txt bold">Enalapril 20 mg</span>
+              </div>
+              <div class="clinical-box">
+                <span class="clinical-lbl">Alergias</span>
+                <span class="clinical-txt bold">Penicilina</span>
+              </div>
+            </div>
+
+            <!-- Diagnóstico -->
+            <div class="clinical-box full-width">
+              <span class="clinical-lbl">Diagnóstico de enfermagem</span>
+              <p class="clinical-txt">
+                Dor aguda relacionada à isquemia miocárdica, com necessidade de avaliação cardiológica imediata e monitoramento contínuo dos sinais vitais.
+              </p>
+            </div>
+
+            <!-- Intervenções -->
+            <div class="clinical-box full-width">
+              <span class="clinical-lbl">Intervenções propostas</span>
+              <p class="clinical-txt">
+                Posicionar o paciente em repouso com oxigénio 2 L/min, solicitar ECG de 12 derivações, manter monitorização contínua e preparar para possível transferência ao setor cardiológico.
+              </p>
+            </div>
+          </div>
+
+          <!-- Comentário do Professor -->
+          <div class="feedback-container">
+            <span class="feedback-lbl">Comentário do professor</span>
+            <textarea class="feedback-input" rows="3">Resposta consistente com a história proposta. O aluno identificou corretamente a dor torácica como sintoma principal e propôs intervenções coerentes com o cenário clínico. Sugestão: incluir a necessidade de anamnese mais detalhada sobre o início da dor e a presença de dispneia associada.</textarea>
+          </div>
+
+          <!-- Botões de Ação com link correto para a tela de feedback -->
+          <div class="feedback-actions">
+            <a href="/dashboard-professor" class="btn-cancel">Voltar</a>
+            <a href="/dashboard-professor/feedback" class="btn-submit-feedback">
+              <i class="fa-solid fa-comment-dots" style="margin-right: 6px;"></i>
+              <span>Registrar feedback</span>
+            </a>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- RODAPÉ -->
+    <footer class="dashboard-footer">
+      <span>© 2025 Senac - Educação Profissionalizante para o Comércio</span>
+      <span>Portal do Professor v1.1.0</span>
+    </footer>
+
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const email = params.get('email');
+    if (email) {
+      document.getElementById('profEmail').textContent = email;
+      const parteNome = email.split('@')[0].replace(/[._]/g, ' ');
+      document.getElementById('profNome').textContent = 'Prof. ' + parteNome.replace(/\b\w/g, l => l.toUpperCase());
+    }
+  </script>
+</body>
+</html>
