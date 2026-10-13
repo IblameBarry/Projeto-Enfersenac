@@ -128,10 +128,14 @@
     if (!alunoId) { document.getElementById('alunoNome').textContent='Sessão não identificada'; document.getElementById('welcomeNome').textContent='aluno'; }
     const panel=document.getElementById('historiasDoDia'), list=document.getElementById('listaHistoriasDoDia'), message=document.getElementById('mensagemHistorias');
     const goToStory = id => { if(!alunoId){ alert('Não foi possível identificar seu cadastro. Faça login novamente.'); return; } const q=new URLSearchParams({id:alunoId,historia_id:id}); if(nome)q.set('nome',nome); if(turma)q.set('turma',turma); location.href='/aluno/prontuario?'+q.toString(); };
+    // Cada clique gera uma nova busca; só a mais recente desenha a lista.
+    // (Antes, dois cliques rápidos faziam as duas buscas adicionarem cards e a lista duplicava.)
+    let buscaAtual=0;
     document.getElementById('escolherProfessor').addEventListener('click', async()=>{
+      const minhaBusca=++buscaAtual;
       panel.hidden=false; list.replaceChildren(); message.textContent='Carregando histórias…';
-      try { const url='/api/historias'+(turma?'?turma='+encodeURIComponent(turma):''); const response=await fetch(url); if(!response.ok)throw new Error('Não foi possível buscar as histórias.'); const historias=await response.json(); const hoje=new Date(); const hojeKey=[hoje.getFullYear(),String(hoje.getMonth()+1).padStart(2,'0'),String(hoje.getDate()).padStart(2,'0')].join('-'); const doDia=historias.filter(h=>h.origem==='PROFESSOR' && h.data_publicacao && String(h.data_publicacao).slice(0,10)===hojeKey);
-      message.textContent=''; if(!doDia.length){message.textContent='Nenhuma história do professor foi publicada hoje para sua turma.';return;} doDia.forEach(h=>{
+      try { const url='/api/historias'+(turma?'?turma='+encodeURIComponent(turma):''); const response=await fetch(url); if(!response.ok)throw new Error('Não foi possível buscar as histórias.'); const historias=await response.json(); if(minhaBusca!==buscaAtual)return; const hoje=new Date(); const hojeKey=[hoje.getFullYear(),String(hoje.getMonth()+1).padStart(2,'0'),String(hoje.getDate()).padStart(2,'0')].join('-'); const doDia=historias.filter(h=>h.origem==='PROFESSOR' && h.data_publicacao && String(h.data_publicacao).slice(0,10)===hojeKey);
+      list.replaceChildren(); message.textContent=''; if(!doDia.length){message.textContent='Nenhuma história do professor foi publicada hoje para sua turma.';return;} doDia.forEach(h=>{
         // Card compacto: só o título e o prazo (o enunciado completo aparece no prontuário).
         const card=document.createElement('button');card.type='button';card.className='published-story-card';card.title='Começar: '+h.titulo;
         const icon=document.createElement('span');icon.className='story-icon';icon.innerHTML='<i class="fa-regular fa-clipboard"></i>';
@@ -143,7 +147,7 @@
         const arrow=document.createElement('span');arrow.className='story-arrow';arrow.innerHTML='<i class="fa-solid fa-arrow-right"></i>';
         card.append(icon,info,arrow);card.addEventListener('click',()=>goToStory(h.id));list.appendChild(card);
       });
-      } catch(e){message.textContent=e.message;}
+      } catch(e){ if(minhaBusca===buscaAtual) message.textContent=e.message; }
     });
     document.getElementById('voltarEscolhas').addEventListener('click',()=>{panel.hidden=true;});
     document.getElementById('escolherAleatoria').addEventListener('click',async()=>{if(!alunoId){alert('Faça login novamente para continuar.');return;} try{const response=await fetch('/api/historias'+(turma?'?turma='+encodeURIComponent(turma):''));if(!response.ok)throw new Error();const historias=await response.json();if(!historias.length){alert('Não há histórias disponíveis no momento.');return;}const escolhida=historias[Math.floor(Math.random()*historias.length)];goToStory(escolhida.id);}catch{alert('Não foi possível carregar as histórias. Tente novamente.');}});

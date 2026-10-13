@@ -337,7 +337,21 @@
     if (form) {
       try { const draft=JSON.parse(localStorage.getItem(draftKey)||'null'); if(draft){ ['titulo','conteudo','expiracao'].forEach(id=>{if(draft[id] && document.getElementById(id)) document.getElementById(id).value=draft[id];}); } } catch {}
       form.addEventListener('input', () => { const draft={}; ['titulo','conteudo','expiracao'].forEach(id=>draft[id]=document.getElementById(id)?.value||''); localStorage.setItem(draftKey,JSON.stringify(draft)); });
-      form.addEventListener('submit', () => localStorage.removeItem(draftKey));
+      // Impede publicar a mesma história duas vezes (duplo clique ou Enter repetido).
+      let publicando = false;
+      form.addEventListener('submit', event => {
+        if (publicando) { event.preventDefault(); return; }
+        publicando = true;
+        const botao = form.querySelector('.btn-primary-publish');
+        if (botao) { botao.disabled = true; botao.textContent = 'Publicando…'; }
+        localStorage.removeItem(draftKey);
+      });
+      // Se o professor voltar para esta página pelo botão "voltar" do navegador, reativa o botão.
+      window.addEventListener('pageshow', () => {
+        publicando = false;
+        const botao = form.querySelector('.btn-primary-publish');
+        if (botao) { botao.disabled = false; botao.textContent = 'Publicar História'; }
+      });
     }
     carregarHistorias();
   </script>
