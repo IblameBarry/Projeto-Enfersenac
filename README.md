@@ -37,3 +37,6 @@ O banco precisa ter recebido o schema PostgreSQL no SQL Editor do Supabase antes
 - O login docente aceita somente endereços terminados em `@ms.senac.br`.
 - A conta de demonstração só é criada/atualizada ao executar `npm run db:seed` com `DATABASE_URL` apontando para o banco correto. Não execute o seed sem confirmar o banco, pois ele altera a conta de demonstração e cria uma história de exemplo.
 - Configure `DATABASE_URL`, `DB_SSL=true` e `DB_SSL_REJECT_UNAUTHORIZED=false` separadamente no Render. Nunca coloque credenciais reais em `.env.example` ou no repositório.
+
+
+teste
