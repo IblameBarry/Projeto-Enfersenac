@@ -131,7 +131,18 @@
     document.getElementById('escolherProfessor').addEventListener('click', async()=>{
       panel.hidden=false; list.replaceChildren(); message.textContent='Carregando histórias…';
       try { const url='/api/historias'+(turma?'?turma='+encodeURIComponent(turma):''); const response=await fetch(url); if(!response.ok)throw new Error('Não foi possível buscar as histórias.'); const historias=await response.json(); const hoje=new Date(); const hojeKey=[hoje.getFullYear(),String(hoje.getMonth()+1).padStart(2,'0'),String(hoje.getDate()).padStart(2,'0')].join('-'); const doDia=historias.filter(h=>h.origem==='PROFESSOR' && h.data_publicacao && String(h.data_publicacao).slice(0,10)===hojeKey);
-      message.textContent=''; if(!doDia.length){message.textContent='Nenhuma história do professor foi publicada hoje para sua turma.';return;} doDia.forEach(h=>{const card=document.createElement('article');card.className='published-story-card';const title=document.createElement('h4');title.textContent=h.titulo;const desc=document.createElement('p');desc.textContent=h.enunciado||'Atividade guiada pelo professor.';const meta=document.createElement('span');meta.textContent='Publicada hoje'+(h.data_expiracao?' · Prazo: '+new Date(h.data_expiracao).toLocaleDateString('pt-BR'):'');const button=document.createElement('button');button.type='button';button.className='action-link';button.textContent='Começar história';button.addEventListener('click',()=>goToStory(h.id));card.append(title,desc,meta,button);list.appendChild(card);});
+      message.textContent=''; if(!doDia.length){message.textContent='Nenhuma história do professor foi publicada hoje para sua turma.';return;} doDia.forEach(h=>{
+        // Card compacto: só o título e o prazo (o enunciado completo aparece no prontuário).
+        const card=document.createElement('button');card.type='button';card.className='published-story-card';card.title='Começar: '+h.titulo;
+        const icon=document.createElement('span');icon.className='story-icon';icon.innerHTML='<i class="fa-regular fa-clipboard"></i>';
+        const info=document.createElement('span');info.className='story-info';
+        const title=document.createElement('strong');title.className='story-title';title.textContent=h.titulo;
+        // data_expiracao vem como "AAAA-MM-DD"; formatar pela string evita o dia "voltar" por causa do fuso.
+        const meta=document.createElement('span');meta.className='story-meta';meta.textContent=h.data_expiracao?'Prazo: '+String(h.data_expiracao).slice(0,10).split('-').reverse().join('/'):'Sem prazo';
+        info.append(title,meta);
+        const arrow=document.createElement('span');arrow.className='story-arrow';arrow.innerHTML='<i class="fa-solid fa-arrow-right"></i>';
+        card.append(icon,info,arrow);card.addEventListener('click',()=>goToStory(h.id));list.appendChild(card);
+      });
       } catch(e){message.textContent=e.message;}
     });
     document.getElementById('voltarEscolhas').addEventListener('click',()=>{panel.hidden=true;});
