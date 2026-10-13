@@ -165,7 +165,7 @@
     if (professorId) sessionStorage.setItem('professor_id', professorId);
     if (email) { sessionStorage.setItem('professor_email', email); document.getElementById('profEmail').textContent = email; }
     if (nome) { sessionStorage.setItem('professor_nome', nome); document.getElementById('profNome').textContent = nome; }
-    else if (email) document.getElementById('profNome').textContent = 'Prof. ' + email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    else if (email) document.getElementById('profNome').textContent = 'Prof. ' + email.split('@')[0].replace(/^prof[._]/i, '').replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
     document.querySelectorAll('a[href^="/dashboard-professor/respostas"], a[href^="/dashboard-professor/feedback"]').forEach(link => {
       const target = new URL(link.href); if (professorId) target.searchParams.set('id', professorId); if (email) target.searchParams.set('email', email); link.href = target.pathname + target.search;

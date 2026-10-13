@@ -30,8 +30,8 @@
       <div class="navbar-right">
         <div class="user-profile">
           <div class="user-meta">
-            <span class="user-name">Prof. Carlos Souza</span>
-            <span class="user-email">prof.carlos@senac.br</span>
+            <span class="user-name" id="profNome">Prof. Carlos Souza</span>
+            <span class="user-email" id="profEmail">prof.carlos@ms.senac.br</span>
           </div>
           <div class="user-avatar">
             <i class="fa-solid fa-user-tie"></i>
@@ -64,12 +64,13 @@
           <h2 class="card-heading mt-10">Resumo do Aluno</h2>
           <p class="card-subheading">Informações da submissão do prontuário técnico.</p>
 
+          <!-- Preenchido via JavaScript com os dados da resposta selecionada -->
           <div class="student-profile-box">
-            <div class="student-avatar-big">AR</div>
+            <div class="student-avatar-big" id="alunoIniciais">—</div>
             <div class="student-profile-info">
-              <strong class="student-profile-name">Ana Ribeiro</strong>
-              <span class="student-profile-cohort">Turma: Enfermagem Geral - Cohorte B</span>
-              <span class="student-profile-id">Protocolo: #PRONT-2026-0482</span>
+              <strong class="student-profile-name" id="alunoNome">Carregando…</strong>
+              <span class="student-profile-cohort" id="alunoTurma">Turma: —</span>
+              <span class="student-profile-id" id="alunoProtocolo">Protocolo: —</span>
             </div>
           </div>
 
@@ -77,15 +78,15 @@
           <div class="info-list-box">
             <div class="info-row">
               <span class="lbl-info">História / Caso:</span>
-              <span class="val-info">Caso do Paciente com Dor Torácica</span>
+              <span class="val-info" id="infoHistoria">—</span>
             </div>
             <div class="info-row">
               <span class="lbl-info">Data de Entrega:</span>
-              <span class="val-info">Hoje às 09:42</span>
+              <span class="val-info" id="infoEntrega">—</span>
             </div>
             <div class="info-row">
               <span class="lbl-info">Status Atual:</span>
-              <span class="status-badge badge-pending">Em Avaliação</span>
+              <span class="status-badge badge-pending" id="infoStatus">Em Avaliação</span>
             </div>
           </div>
 
@@ -94,15 +95,15 @@
           <div class="extract-box">
             <div class="extract-item">
               <span class="extract-lbl">Queixa Principal e Triagem:</span>
-              <p class="extract-txt">"Dor torácica intensa com irradiação para MSE. PA: 160/100 mmHg, FC: 112 bpm."</p>
+              <p class="extract-txt" id="extratoTriagem">—</p>
             </div>
             <div class="extract-item">
               <span class="extract-lbl">Diagnóstico de Enfermagem:</span>
-              <p class="extract-txt">"Dor aguda associada à isquemia miocárdica com necessidade de avaliação prioritária."</p>
+              <p class="extract-txt" id="extratoDiagnostico">—</p>
             </div>
             <div class="extract-item">
               <span class="extract-lbl">Conduta Proposta:</span>
-              <p class="extract-txt">"Repouso imediato, O2 a 2 L/min, monitorização cardíaca contínua e solicitação de ECG urgente."</p>
+              <p class="extract-txt" id="extratoConduta">—</p>
             </div>
           </div>
         </div>
@@ -134,7 +135,8 @@
                     <strong>1. Precisão da Triagem</strong>
                     <span>Coleta de dados vitais e identificação da queixa principal</span>
                   </div>
-                  <select name="criterio_triagem" class="select-score">
+                  <select name="criterio_triagem" id="criterio_triagem" class="select-score" required>
+                    <option value="" disabled selected>Selecione…</option>
                     <option value="excelente">Excelente (100%)</option>
                     <option value="adequado">Adequado (80%)</option>
                     <option value="regular">Regular (60%)</option>
@@ -148,8 +150,9 @@
                     <strong>2. Raciocínio Diagnóstico</strong>
                     <span>Formulação de diagnósticos de enfermagem pertinentes</span>
                   </div>
-                  <select name="criterio_diagnostico" class="select-score">
-                    <option value="excelente" selected>Excelente (100%)</option>
+                  <select name="criterio_diagnostico" id="criterio_diagnostico" class="select-score" required>
+                    <option value="" disabled selected>Selecione…</option>
+                    <option value="excelente">Excelente (100%)</option>
                     <option value="adequado">Adequado (80%)</option>
                     <option value="regular">Regular (60%)</option>
                     <option value="insuficiente">Insuficiente (40%)</option>
@@ -162,9 +165,10 @@
                     <strong>3. Condutas e Prescrições</strong>
                     <span>Eficácia e segurança nas intervenções propostas</span>
                   </div>
-                  <select name="criterio_conduta" class="select-score">
+                  <select name="criterio_conduta" id="criterio_conduta" class="select-score" required>
+                    <option value="" disabled selected>Selecione…</option>
                     <option value="excelente">Excelente (100%)</option>
-                    <option value="adequado" selected>Adequado (80%)</option>
+                    <option value="adequado">Adequado (80%)</option>
                     <option value="regular">Regular (60%)</option>
                     <option value="insuficiente">Insuficiente (40%)</option>
                   </select>
@@ -175,7 +179,7 @@
             <!-- NOTA / CONCEITO FINAL -->
             <div class="grade-input-box">
               <label for="nota_final" class="grade-label">Nota Final / Conceito (0 a 10):</label>
-              <input type="number" id="nota_final" name="nota_final" class="input-grade" value="9.5" step="0.5" min="0" max="10" required>
+              <input type="number" id="nota_final" name="nota_final" class="input-grade" placeholder="0–10" step="0.5" min="0" max="10" required>
             </div>
 
             <!-- PARECER PEDAGÓGICO / FEEDBACK DETALHADO -->
@@ -188,17 +192,17 @@
                 rows="6" 
                 placeholder="Insira as observações pedagógicas, pontos fortes identificados e sugestões de melhoria técnica para o aluno..."
                 required
-              >Parabéns pela condução do caso! A correlação entre a dor torácica aguda e os sinais de alerta hipertensivo foi precisa. A indicação de eletrocardiograma imediato e oxigenoterapia demonstrou excelente raciocínio crítico de urgência. Como recomendação de aperfeiçoamento, lembre-se de detalhar melhor na anamnese a existência de irradiação para a mandíbula ou dorso.</textarea>
+              ></textarea>
             </div>
 
             <!-- OPÇÕES ADICIONAIS -->
             <div class="options-box">
               <label class="custom-check-lbl">
-                <input type="checkbox" name="notificar_aluno" checked>
+                <input type="checkbox" name="notificar_aluno" id="notificar_aluno" checked>
                 <span>Enviar notificação com o parecer imediatamente para o portal do aluno.</span>
               </label>
               <label class="custom-check-lbl">
-                <input type="checkbox" name="liberar_revisao">
+                <input type="checkbox" name="liberar_revisao" id="liberar_revisao">
                 <span>Permitir que a aluna reenvie uma segunda versão deste prontuário.</span>
               </label>
             </div>
@@ -208,7 +212,7 @@
               <a href="/dashboard-professor/respostas" class="btn-cancel">Cancelar</a>
               <button type="submit" class="btn-submit-feedback">
                 <i class="fa-solid fa-check-double"></i>
-                <span>Publicar Feedback & Salvar Avaliação</span>
+                <span id="textoBotaoSalvar">Publicar Feedback & Salvar Avaliação</span>
               </button>
             </div>
 
@@ -235,11 +239,61 @@
     if (respostaField && respostaId) respostaField.value = respostaId;
     if (professorId) sessionStorage.setItem('professor_id', professorId);
     const emailParam = feedbackParams.get('email') || sessionStorage.getItem('professor_email');
-    if (emailParam) sessionStorage.setItem('professor_email', emailParam);
+    if (emailParam) {
+      sessionStorage.setItem('professor_email', emailParam);
+      document.getElementById('profEmail').textContent = emailParam;
+      document.getElementById('profNome').textContent = 'Prof. ' + emailParam.split('@')[0].replace(/^prof[._]/i, '').replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    // ---- Preenche o "Resumo do Aluno" com os dados reais da resposta ----
+    const setText = (id, valor) => { document.getElementById(id).textContent = valor; };
+    const temValor = v => v !== null && v !== undefined && String(v).trim() !== '';
+    const juntar = (partes, sep) => partes.filter(p => p !== false && temValor(p)).join(sep);
+    const dataHora = v => {
+      const d = v ? new Date(String(v).replace(' ', 'T')) : null;
+      return d && !Number.isNaN(d.getTime()) ? d.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '—';
+    };
+    function preencherResumo(r) {
+      const nome = r.aluno_nome || 'Aluno';
+      setText('alunoIniciais', nome.trim().split(/\s+/).slice(0, 2).map(x => x[0] || '').join('').toUpperCase());
+      setText('alunoNome', nome);
+      setText('alunoTurma', 'Turma: ' + (r.aluno_turma || '—'));
+      setText('alunoProtocolo', 'Protocolo: ' + (r.numero_prontuario || '#' + r.id));
+      setText('infoHistoria', r.historia_titulo || '—');
+      setText('infoEntrega', dataHora(r.enviada_em));
+      setText('infoStatus', (r.comentarios || []).length ? 'Avaliada' : 'Em Avaliação');
+      setText('extratoTriagem', juntar([
+        r.queixa_principal,
+        temValor(r.pressao_arterial) && 'PA: ' + r.pressao_arterial,
+        temValor(r.frequencia_cardiaca) && 'FC: ' + r.frequencia_cardiaca + ' bpm',
+      ], ' · ') || 'Não informado');
+      setText('extratoDiagnostico', r.diagnostico_enfermagem || 'Não informado');
+      setText('extratoConduta', juntar([r.intervencao_prioritaria, r.conclusao_clinica], ' — ') || 'Não informado');
+    }
+
+    // Se este professor já deu feedback nesta resposta, carrega texto, nota, competências
+    // e opções para edição (ao salvar, o servidor atualiza o mesmo registro em vez de criar outro).
+    function carregarFeedbackExistente(r) {
+      const meus = (r.comentarios || []).filter(c => String(c.professor_id) === String(professorId));
+      if (!meus.length) return;
+      const c = meus[meus.length - 1];
+      document.getElementById('comentario_docente').value = c.texto || '';
+      if (temValor(c.nota_final)) document.getElementById('nota_final').value = Number(c.nota_final);
+      ['criterio_triagem', 'criterio_diagnostico', 'criterio_conduta'].forEach(nome => {
+        if (c[nome]) document.getElementById(nome).value = c[nome];
+      });
+      if (typeof c.notificar_aluno === 'boolean') document.getElementById('notificar_aluno').checked = c.notificar_aluno;
+      if (typeof c.liberar_revisao === 'boolean') document.getElementById('liberar_revisao').checked = c.liberar_revisao;
+      setText('textoBotaoSalvar', 'Atualizar Feedback');
+    }
+
     if (respostaId) {
       fetch('/api/respostas/' + encodeURIComponent(respostaId))
         .then(response => { if (!response.ok) throw new Error('Resposta não encontrada'); return response.json(); })
         .then(resposta => {
+          preencherResumo(resposta);
+          carregarFeedbackExistente(resposta);
+
           // "Voltar às respostas" e "Cancelar" reabrem a mesma resposta na lista da história.
           const voltarQ = new URLSearchParams({ resposta_id: String(resposta.id), historia_id: String(resposta.historia_id) });
           if (professorId) voltarQ.set('id', professorId);
@@ -272,6 +326,6 @@
       }
     });
   </script>
-  <style>.selected-answer-context{padding:12px 14px;margin:0 0 16px;border:1px solid #d7e2e8;border-radius:8px;background:#f3f7f9;color:#354e5d;line-height:1.5}.eval-form input,.eval-form textarea,.eval-form select{border-color:#cbd5dc}.eval-form button{filter:saturate(.9)}</style>
+  <style>.selected-answer-context{padding:12px 14px;margin:0 0 16px;border:1px solid #d7e2e8;border-radius:8px;background:#f3f7f9;color:#354e5d;line-height:1.5}.eval-form input,.eval-form textarea,.eval-form select{border-color:#cbd5dc}.eval-form button{filter:saturate(.9)}.input-grade::placeholder{color:#cbd5e1;font-weight:500}</style>
 </body>
 </html>

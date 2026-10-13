@@ -94,6 +94,10 @@ button{font:inherit;cursor:pointer}
 .comment{padding:12px 0;border-top:1px solid var(--line);color:var(--muted);line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
 .comment:first-of-type{border-top:0;padding-top:0}
 .comment small{display:block;margin-bottom:4px;color:var(--ink);font-weight:600;font-size:.76rem}
+.grades{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px;white-space:normal}
+.grade{padding:4px 10px;border-radius:20px;background:#fff;border:1px solid var(--line);color:var(--muted);font-size:.76rem}
+.grade b{color:var(--ink);font-weight:600}
+.grade.main{background:var(--orange-soft);border-color:#fbd5b8}.grade.main b{color:#c2530f}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
 
 /* RODAPÉ */
@@ -179,7 +183,7 @@ if (professorId) sessionStorage.setItem('professor_id', professorId);
 if (email) {
   sessionStorage.setItem('professor_email', email);
   document.getElementById('profEmail').textContent = email;
-  document.getElementById('profNome').textContent = 'Prof. ' + email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  document.getElementById('profNome').textContent = 'Prof. ' + email.split('@')[0].replace(/^prof[._]/i, '').replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
 const comProfessor = path => {
@@ -326,6 +330,23 @@ function completo(r) {
   return fields;
 }
 
+const NIVEIS = { excelente: 'Excelente', adequado: 'Adequado', regular: 'Regular', insuficiente: 'Insuficiente' };
+// Linha com a nota final e as competências avaliadas (null se o feedback não tiver avaliação).
+function avaliacaoDe(c) {
+  const chips = [];
+  if (!vazio(c.nota_final)) chips.push(['Nota', Number(c.nota_final).toLocaleString('pt-BR', { minimumFractionDigits: 1 }), true]);
+  [['Triagem', c.criterio_triagem], ['Diagnóstico', c.criterio_diagnostico], ['Conduta', c.criterio_conduta]]
+    .forEach(([nome, nivel]) => { if (nivel) chips.push([nome, NIVEIS[nivel] || nivel]); });
+  if (!chips.length) return null;
+  const linha = el('div', 'grades');
+  chips.forEach(([nome, valor, destaque]) => {
+    const chip = el('span', 'grade' + (destaque ? ' main' : ''));
+    chip.append(el('span', '', nome + ': '), el('b', '', valor));
+    linha.append(chip);
+  });
+  return linha;
+}
+
 function renderDetail() {
   const r = atual;
   detalheSubtitulo.textContent = 'História selecionada: ' + (r.historia_titulo || '—') + '.';
@@ -359,9 +380,13 @@ function renderDetail() {
     lista.append(el('p', 'comment', 'Nenhum feedback registrado para esta resposta ainda.'));
   } else {
     r.comentarios.forEach(c => {
-      const p = el('p', 'comment');
-      p.append(el('small', '', (c.professor_nome || 'Professor') + ' · ' + dataEnvio(c.criado_em)), document.createTextNode(c.texto || ''));
-      lista.append(p);
+      const item = el('div', 'comment');
+      const quando = c.atualizado_em ? 'editado ' + dataEnvio(c.atualizado_em) : dataEnvio(c.criado_em);
+      item.append(el('small', '', (c.professor_nome || 'Professor') + ' · ' + quando));
+      const notas = avaliacaoDe(c);
+      if (notas) item.append(notas);
+      item.append(document.createTextNode(c.texto || ''));
+      lista.append(item);
     });
   }
   coment.append(lista);

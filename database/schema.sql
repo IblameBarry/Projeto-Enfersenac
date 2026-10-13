@@ -126,7 +126,20 @@ CREATE TABLE IF NOT EXISTS public.comentario (
     resposta_id BIGINT NOT NULL,
     professor_id BIGINT NOT NULL,
     texto TEXT COLLATE public.mysql_unicode_ci NOT NULL,
+    nota_final NUMERIC(3,1),
+    criterio_triagem VARCHAR(20),
+    criterio_diagnostico VARCHAR(20),
+    criterio_conduta VARCHAR(20),
+    notificar_aluno BOOLEAN NOT NULL DEFAULT TRUE,
+    liberar_revisao BOOLEAN NOT NULL DEFAULT FALSE,
     criado_em TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TIMESTAMP(0) WITHOUT TIME ZONE,
+    CONSTRAINT ck_comentario_nota CHECK (nota_final IS NULL OR nota_final BETWEEN 0 AND 10),
+    CONSTRAINT ck_comentario_criterios CHECK (
+        (criterio_triagem IS NULL OR criterio_triagem IN ('excelente', 'adequado', 'regular', 'insuficiente')) AND
+        (criterio_diagnostico IS NULL OR criterio_diagnostico IN ('excelente', 'adequado', 'regular', 'insuficiente')) AND
+        (criterio_conduta IS NULL OR criterio_conduta IN ('excelente', 'adequado', 'regular', 'insuficiente'))
+    ),
     CONSTRAINT fk_comentario_resposta FOREIGN KEY (resposta_id) REFERENCES public.resposta(id) ON DELETE CASCADE,
     CONSTRAINT fk_comentario_professor FOREIGN KEY (professor_id) REFERENCES public.professor(id)
 );

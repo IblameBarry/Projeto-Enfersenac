@@ -29,6 +29,16 @@ O seed cria o professor de teste e uma história apenas se ainda não existirem.
 
 O banco precisa ter recebido o schema PostgreSQL no SQL Editor do Supabase antes de iniciar a aplicação. Não execute um schema MySQL neste projeto. O aplicativo usa `DATABASE_URL` quando definida; também aceita a configuração dividida `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD` e `DB_NAME`.
 
+### Migrações
+
+Alterações de banco posteriores ao schema inicial ficam em `database/migrations/*.sql` (ex.: nota final e competências do feedback docente). Elas são aplicadas automaticamente quando o servidor inicia e podem rodar várias vezes sem erro. Para aplicar manualmente:
+
+```bash
+npm run db:migrate
+```
+
+Também é possível colar o conteúdo do arquivo `.sql` no SQL Editor do Supabase.
+
 `DB_SSL=true` habilita TLS. `DB_SSL_REJECT_UNAUTHORIZED=false` é uma opção de compatibilidade com conexões cujo certificado não é reconhecido pelo Node.js; a conexão continua criptografada, mas a identidade do certificado não é validada. Prefira `true` quando a cadeia de certificados do sistema estiver configurada corretamente.
 
 ## Correções de deploy (outubro de 2026)

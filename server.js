@@ -5,6 +5,7 @@ const path = require('path');
 // projeto, independente de onde o "node" foi executado) — não precisa
 // repetir require('dotenv').config() aqui.
 const { testConnection } = require('./database/db');
+const { aplicarMigracoes } = require('./database/migrate');
 const alunoModel = require('./models/alunoModel');
 const professorModel = require('./models/professorModel');
 const historiaModel = require('./models/historiaModel');
@@ -251,6 +252,7 @@ app.post('/prontuario/salvar', async (req, res) => {
 });
 
 // Envio do Feedback (Professor) — comentário sobre uma resposta específica.
+// Se o professor já tiver feedback nessa resposta, ele é atualizado (não duplica).
 app.post('/feedback/salvar', async (req, res) => {
   try {
     const { resposta_id, professor_id, comentario_docente } = req.body;
@@ -260,10 +262,11 @@ app.post('/feedback/salvar', async (req, res) => {
         .send('resposta_id e professor_id são obrigatórios (inclua campos ocultos no formulário).');
     }
 
-    await comentarioModel.criar({
+    await comentarioModel.salvar({
       resposta_id,
       professor_id,
       texto: comentario_docente || '',
+      body: req.body, // nota_final, criterios e checkboxes do formulário
     });
 
     // Volta para a tela de respostas já com a resposta avaliada aberta.
@@ -272,6 +275,7 @@ app.post('/feedback/salvar', async (req, res) => {
     if (resposta) q.set('historia_id', String(resposta.historia_id));
     res.redirect(`/dashboard-professor/respostas?${q.toString()}`);
   } catch (err) {
+    if (err.status === 400) return res.status(400).send(err.message);
     console.error(err);
     res.status(500).send('Erro ao salvar feedback.');
   }
@@ -285,5 +289,12 @@ app.listen(PORT, async () => {
   console.log(` Servidor rodando em http://localhost:${PORT}`);
   console.log(` Feedback Docente: http://localhost:${PORT}/dashboard-professor/feedback`);
   console.log('====================================================');
-  await testConnection();
+  if (await testConnection()) {
+    // Garante as colunas novas (ex.: nota e competências do feedback) em bancos já existentes.
+    try {
+      await aplicarMigracoes();
+    } catch (err) {
+      console.error('Erro ao aplicar migrações:', err.message);
+    }
+  }
 });
