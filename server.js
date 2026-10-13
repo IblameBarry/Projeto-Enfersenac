@@ -96,6 +96,45 @@ app.get('/api/professores/:id/historias', async (req, res) => {
   }
 });
 
+// Contagem do que será apagado junto com a história (usado no aviso antes de excluir).
+app.get('/api/historias/:id/vinculos', async (req, res) => {
+  try {
+    const { professor_id } = req.query;
+    if (!/^\d+$/.test(String(req.params.id)) || !/^\d+$/.test(String(professor_id || ''))) {
+      return res.status(400).json({ erro: 'ID de história ou de professor inválido.' });
+    }
+    const vinculos = await historiaModel.contarVinculos(req.params.id, professor_id);
+    if (!vinculos) return res.status(404).json({ erro: 'História não encontrada para este professor.' });
+    res.json(vinculos);
+  } catch (err) {
+    console.error('Erro ao contar vínculos da história:', err);
+    res.status(500).json({ erro: 'Erro ao verificar respostas vinculadas.' });
+  }
+});
+
+// Exclui uma história do professor e todas as respostas/feedbacks vinculados.
+// O front envia quantas respostas mostrou no aviso; se chegaram respostas novas
+// depois disso, a exclusão é recusada para o professor confirmar de novo.
+app.delete('/api/historias/:id', async (req, res) => {
+  try {
+    const { professor_id, respostas_confirmadas } = req.body || {};
+    if (!/^\d+$/.test(String(req.params.id)) || !/^\d+$/.test(String(professor_id || ''))) {
+      return res.status(400).json({ erro: 'ID de história ou de professor inválido.' });
+    }
+
+    const excluido = await historiaModel.excluir(req.params.id, professor_id, Number(respostas_confirmadas) || 0);
+    if (!excluido) return res.status(404).json({ erro: 'História não encontrada para este professor.' });
+    if (excluido.conflito) {
+      const vinculos = await historiaModel.contarVinculos(req.params.id, professor_id);
+      return res.status(409).json({ erro: 'Novas respostas foram vinculadas a esta história. Confira o aviso e confirme novamente.', vinculos });
+    }
+    res.json({ ok: true, ...excluido });
+  } catch (err) {
+    console.error('Erro ao excluir história:', err);
+    res.status(500).json({ erro: 'Erro ao excluir a história.' });
+  }
+});
+
 // Histórias ativas para a turma do aluno (ou todas, se não passar ?turma=)
 app.get('/api/historias', async (req, res) => {
   try {

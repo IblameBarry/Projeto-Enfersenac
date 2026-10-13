@@ -11,6 +11,33 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- Ícones Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .stories-table .acoes{display:flex;justify-content:flex-end;gap:6px;white-space:nowrap}
+    .stories-table .action-delete{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:6px;border:1px solid #fecaca;background:#fff5f5;color:#b91c1c;font:600 .86rem Inter,sans-serif;cursor:pointer}
+    .stories-table .action-delete:hover{background:#fee2e2}
+    .modal-excluir{margin:auto;border:0;border-radius:12px;padding:0;width:min(480px,calc(100% - 32px));box-shadow:0 20px 50px rgba(15,23,42,.3);color:#1e293b}
+    .modal-excluir::backdrop{background:rgba(15,23,42,.55)}
+    .modal-box{padding:22px;font-family:Inter,sans-serif}
+    .modal-head{display:flex;gap:14px;align-items:flex-start;margin-bottom:16px}
+    .modal-icon{flex:0 0 40px;height:40px;display:grid;place-items:center;border-radius:50%;background:#fee2e2;color:#b91c1c}
+    .modal-head h3{font-size:1.1rem;margin:2px 0 4px}
+    .modal-historia{color:#64748b;font-size:.88rem;overflow-wrap:anywhere}
+    .modal-alerta{padding:12px 14px;border-radius:8px;border:1px solid #fed7aa;background:#fff7ed;color:#9a3412;font-size:.88rem;line-height:1.5}
+    .modal-alerta ul{margin:8px 0 0 18px}
+    .modal-info{color:#475569;font-size:.88rem;line-height:1.5}
+    .modal-irreversivel{margin-top:12px;color:#b91c1c;font-size:.82rem;font-weight:600}
+    .modal-check{display:flex;gap:10px;align-items:flex-start;margin-top:14px;font-size:.86rem;line-height:1.45;cursor:pointer}
+    .modal-check input{margin-top:3px;accent-color:#b91c1c}
+    .modal-erro{margin-top:12px;padding:10px 12px;border-radius:8px;background:#fef2f2;color:#b91c1c;font-size:.84rem}
+    .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;flex-wrap:wrap}
+    .btn-modal{padding:10px 16px;border-radius:8px;border:1px solid #cbd5e1;background:#fff;color:#1e293b;font:600 .88rem Inter,sans-serif;cursor:pointer}
+    .btn-modal:hover{background:#f8fafc}
+    .btn-danger{background:#dc2626;border-color:#dc2626;color:#fff}
+    .btn-danger:hover{background:#b91c1c}
+    .btn-modal:disabled{opacity:.5;cursor:not-allowed}
+    .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);max-width:calc(100% - 32px);padding:12px 18px;border-radius:8px;background:#1e293b;color:#fff;font:500 .88rem Inter,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:10}
+    .toast[hidden]{display:none}
+  </style>
 </head>
 <body>
   <div class="dashboard-wrapper">
@@ -123,12 +150,12 @@
             <table class="stories-table">
               <thead>
                 <tr>
-                  <th style="width: 32%;">Título</th>
-                  <th style="width: 18%;">Publicação</th>
-                  <th style="width: 18%;">Expiração</th>
-                  <th style="width: 12%;">Respostas</th>
+                  <th style="width: 28%;">Título</th>
+                  <th style="width: 14%;">Publicação</th>
+                  <th style="width: 14%;">Expiração</th>
+                  <th style="width: 10%;">Respostas</th>
                   <th style="width: 10%;">Status</th>
-                  <th style="width: 10%; text-align: right;">Ações</th>
+                  <th style="width: 24%; text-align: right;">Ações</th>
                 </tr>
               </thead>
               <tbody id="historiasPublicadas"></tbody>
@@ -146,6 +173,26 @@
       </section>
 
     </main>
+
+    <!-- AVISO PARA EXCLUIR HISTÓRIA -->
+    <dialog class="modal-excluir" id="modalExcluir" aria-labelledby="modalExcluirTitulo">
+      <form method="dialog" class="modal-box" id="formExcluir">
+        <div class="modal-head">
+          <span class="modal-icon"><i class="fa-solid fa-trash-can"></i></span>
+          <div>
+            <h3 id="modalExcluirTitulo">Excluir história</h3>
+            <p class="modal-historia" id="modalHistoriaTitulo"></p>
+          </div>
+        </div>
+        <div id="modalCorpo"></div>
+        <p class="modal-erro" id="modalErro" hidden></p>
+        <div class="modal-actions">
+          <button type="button" class="btn-modal" id="btnCancelarExclusao">Cancelar</button>
+          <button type="submit" class="btn-modal btn-danger" id="btnConfirmarExclusao" disabled>Excluir história</button>
+        </div>
+      </form>
+    </dialog>
+    <div class="toast" id="toast" role="status" hidden></div>
 
     <!-- RODAPÉ -->
     <footer class="dashboard-footer">
@@ -184,10 +231,107 @@
         historias.forEach(h => {
           const tr = document.createElement('tr');
           [h.titulo, dataFmt(h.data_publicacao), dataFmt(h.data_expiracao), String(h.total_respostas || 0), h.status || 'ATIVA'].forEach(value => { const td=document.createElement('td'); td.textContent=value; tr.appendChild(td); });
-          const acao=document.createElement('td'); acao.style.textAlign='right'; const link=document.createElement('a'); link.className='action-link'; link.href='/dashboard-professor/respostas?id='+encodeURIComponent(professorId)+'&historia_id='+encodeURIComponent(h.id); link.textContent='Respostas'; acao.appendChild(link); tr.appendChild(acao); tbody.appendChild(tr);
+          const acao=document.createElement('td'); const acoes=document.createElement('div'); acoes.className='acoes';
+          const link=document.createElement('a'); link.className='action-link'; link.href='/dashboard-professor/respostas?id='+encodeURIComponent(professorId)+'&historia_id='+encodeURIComponent(h.id); link.textContent='Respostas';
+          const excluir=document.createElement('button'); excluir.type='button'; excluir.className='action-delete'; excluir.innerHTML='<i class="fa-solid fa-trash-can"></i> Excluir'; excluir.title='Excluir história'; excluir.addEventListener('click',()=>abrirExclusao(h));
+          acoes.append(link, excluir); acao.appendChild(acoes); tr.appendChild(acao); tbody.appendChild(tr);
         });
       } catch (error) { vazio.hidden = false; vazio.querySelector('.empty-text').textContent = error.message; }
     }
+
+    /* ---------- Excluir história (com aviso de respostas vinculadas) ---------- */
+    const modal = document.getElementById('modalExcluir');
+    const modalCorpo = document.getElementById('modalCorpo');
+    const modalErro = document.getElementById('modalErro');
+    const btnConfirmar = document.getElementById('btnConfirmarExclusao');
+    let exclusao = null; // { historia, totalRespostas }
+
+    const plural = (n, um, varios) => n + ' ' + (n === 1 ? um : varios);
+    function mostrarErro(msg) { modalErro.textContent = msg; modalErro.hidden = !msg; }
+    function toast(msg) {
+      const t = document.getElementById('toast'); t.textContent = msg; t.hidden = false;
+      clearTimeout(toast.timer); toast.timer = setTimeout(() => { t.hidden = true; }, 4000);
+    }
+
+    function renderAviso(v) {
+      const total = v.respostas_enviadas + v.rascunhos;
+      exclusao.totalRespostas = total;
+      modalCorpo.replaceChildren();
+      if (total > 0) {
+        const alerta = document.createElement('div'); alerta.className = 'modal-alerta';
+        const titulo = document.createElement('strong'); titulo.textContent = 'Atenção: existem respostas de alunos vinculadas a esta história.';
+        const lista = document.createElement('ul');
+        [plural(v.respostas_enviadas, 'resposta enviada', 'respostas enviadas'),
+         plural(v.rascunhos, 'rascunho em andamento', 'rascunhos em andamento'),
+         plural(v.comentarios, 'feedback do professor', 'feedbacks do professor')]
+          .forEach(txt => { const li = document.createElement('li'); li.textContent = txt; lista.appendChild(li); });
+        const fim = document.createElement('p'); fim.style.marginTop = '8px';
+        fim.textContent = 'Ao excluir a história, todos esses registros também serão apagados.';
+        alerta.append(titulo, lista, fim);
+
+        const check = document.createElement('label'); check.className = 'modal-check';
+        const input = document.createElement('input'); input.type = 'checkbox'; input.id = 'confirmaVinculos';
+        const span = document.createElement('span'); span.textContent = 'Entendo que as respostas e os feedbacks vinculados também serão excluídos.';
+        check.append(input, span);
+        input.addEventListener('change', () => { btnConfirmar.disabled = !input.checked; });
+        modalCorpo.append(alerta, check);
+        btnConfirmar.disabled = true;
+      } else {
+        const info = document.createElement('p'); info.className = 'modal-info';
+        info.textContent = 'Nenhum aluno respondeu esta história ainda.';
+        modalCorpo.append(info);
+        btnConfirmar.disabled = false;
+      }
+      const irreversivel = document.createElement('p'); irreversivel.className = 'modal-irreversivel';
+      irreversivel.textContent = 'Esta ação não pode ser desfeita.';
+      modalCorpo.append(irreversivel);
+    }
+
+    async function abrirExclusao(h) {
+      exclusao = { historia: h, totalRespostas: 0 };
+      document.getElementById('modalHistoriaTitulo').textContent = '“' + h.titulo + '”';
+      modalCorpo.innerHTML = '<p class="modal-info">Verificando respostas vinculadas…</p>';
+      mostrarErro(''); btnConfirmar.disabled = true; btnConfirmar.textContent = 'Excluir história';
+      modal.showModal();
+      try {
+        // Busca a contagem na hora (pode ter chegado resposta depois que a lista carregou).
+        const res = await fetch('/api/historias/' + encodeURIComponent(h.id) + '/vinculos?professor_id=' + encodeURIComponent(professorId));
+        const dados = await res.json();
+        if (!res.ok) throw new Error(dados.erro || 'Não foi possível verificar as respostas vinculadas.');
+        renderAviso(dados);
+      } catch (e) {
+        modalCorpo.replaceChildren(); mostrarErro(e.message);
+      }
+    }
+
+    document.getElementById('btnCancelarExclusao').addEventListener('click', () => modal.close());
+    document.getElementById('formExcluir').addEventListener('submit', async event => {
+      event.preventDefault();
+      if (!exclusao || btnConfirmar.disabled) return;
+      btnConfirmar.disabled = true; btnConfirmar.textContent = 'Excluindo…'; mostrarErro('');
+      try {
+        const res = await fetch('/api/historias/' + encodeURIComponent(exclusao.historia.id), {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ professor_id: professorId, respostas_confirmadas: exclusao.totalRespostas }),
+        });
+        const dados = await res.json().catch(() => ({}));
+        if (res.status === 409 && dados.vinculos) {
+          // Chegaram respostas novas: atualiza o aviso e pede confirmação de novo.
+          renderAviso(dados.vinculos); mostrarErro(dados.erro);
+          btnConfirmar.textContent = 'Excluir história';
+          return;
+        }
+        if (!res.ok) throw new Error(dados.erro || 'Não foi possível excluir a história.');
+        modal.close();
+        toast('História excluída' + (dados.respostas ? ' junto com ' + plural(dados.respostas, 'resposta vinculada', 'respostas vinculadas') : '') + '.');
+        carregarHistorias();
+      } catch (e) {
+        mostrarErro(e.message);
+        btnConfirmar.textContent = 'Excluir história';
+        btnConfirmar.disabled = exclusao.totalRespostas > 0 && !document.getElementById('confirmaVinculos')?.checked;
+      }
+    });
     const form = document.querySelector('.story-form');
     const draftKey = 'pontuario_historia_rascunho_' + (professorId || 'sem-id');
     if (form) {

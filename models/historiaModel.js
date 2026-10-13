@@ -37,6 +37,59 @@ async function listarPorProfessor(professorId) {
   return rows;
 }
 
+// Quantas respostas (enviadas e rascunhos) e feedbacks estão ligados à história.
+// Retorna null se a história não existir ou não pertencer ao professor.
+async function contarVinculos(id, professorId) {
+  const { rows } = await pool.query(
+    `SELECT h.id, h.titulo,
+            (SELECT COUNT(*)::int FROM resposta r WHERE r.historia_id = h.id AND r.status = 'ENVIADA') AS respostas_enviadas,
+            (SELECT COUNT(*)::int FROM resposta r WHERE r.historia_id = h.id AND r.status = 'RASCUNHO') AS rascunhos,
+            (SELECT COUNT(*)::int FROM comentario c JOIN resposta r ON r.id = c.resposta_id WHERE r.historia_id = h.id) AS comentarios
+     FROM historia h
+     WHERE h.id = $1 AND h.professor_id = $2`,
+    [id, professorId]
+  );
+  return rows[0] || null;
+}
+
+// Exclui a história junto com tudo que depende dela (feedbacks e respostas),
+// numa única transação: ou apaga tudo, ou não apaga nada.
+// respostasConfirmadas = quantas respostas o professor viu no aviso; se houver mais
+// agora (um aluno enviou depois), nada é apagado e retorna { conflito: true }.
+async function excluir(id, professorId, respostasConfirmadas) {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    // FOR UPDATE trava a história: novas respostas para ela esperam esta transação terminar.
+    const dono = await client.query(
+      'SELECT id FROM historia WHERE id = $1 AND professor_id = $2 FOR UPDATE',
+      [id, professorId]
+    );
+    if (!dono.rows.length) {
+      await client.query('ROLLBACK');
+      return null;
+    }
+    const total = await client.query('SELECT COUNT(*)::int AS n FROM resposta WHERE historia_id = $1', [id]);
+    if (total.rows[0].n > respostasConfirmadas) {
+      await client.query('ROLLBACK');
+      return { conflito: true };
+    }
+    const comentarios = await client.query(
+      'DELETE FROM comentario WHERE resposta_id IN (SELECT id FROM resposta WHERE historia_id = $1)',
+      [id]
+    );
+    const respostas = await client.query('DELETE FROM resposta WHERE historia_id = $1', [id]);
+    await client.query('DELETE FROM historia WHERE id = $1', [id]);
+    await client.query('COMMIT');
+    return { respostas: respostas.rowCount, comentarios: comentarios.rowCount };
+  } catch (err) {
+    await client.query('ROLLBACK').catch(() => {});
+    throw err;
+  } finally {
+    client.release();
+  }
+}
+
 async function listarTodas() {
   const { rows } = await pool.query(
     `SELECT h.*, p.nome AS professor_nome
@@ -52,4 +105,12 @@ async function buscarPorId(id) {
   return rows[0] || null;
 }
 
-module.exports = { criar, listarAtivasParaTurma, listarTodas, listarPorProfessor, buscarPorId };
+module.exports = {
+  criar,
+  listarAtivasParaTurma,
+  listarTodas,
+  listarPorProfessor,
+  buscarPorId,
+  contarVinculos,
+  excluir,
+};
