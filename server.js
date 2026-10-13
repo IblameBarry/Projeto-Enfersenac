@@ -120,10 +120,15 @@ app.get('/api/alunos/:id/respostas', async (req, res) => {
   }
 });
 
-// Respostas enviadas pelos alunos (para a tela "respostas do professor")
+// Respostas enviadas pelos alunos (para a tela "respostas do professor").
+// Aceita ?historia_id= para listar só as respostas da história selecionada.
 app.get('/api/respostas', async (req, res) => {
   try {
-    const respostas = await respostaModel.listarEnviadas();
+    const { historia_id } = req.query;
+    if (historia_id && !/^\d+$/.test(String(historia_id))) {
+      return res.status(400).json({ erro: 'ID de história inválido.' });
+    }
+    const respostas = await respostaModel.listarEnviadas(historia_id || null);
     res.json(respostas);
   } catch (err) {
     console.error(err);
@@ -134,6 +139,7 @@ app.get('/api/respostas', async (req, res) => {
 // Detalhe de uma resposta + comentários já feitos. Marca como lida ao abrir.
 app.get('/api/respostas/:id', async (req, res) => {
   try {
+    if (!/^\d+$/.test(String(req.params.id))) return res.status(400).json({ erro: 'ID de resposta inválido.' });
     const resposta = await respostaModel.buscarPorId(req.params.id);
     if (!resposta) return res.status(404).json({ erro: 'Resposta não encontrada.' });
 
@@ -259,7 +265,12 @@ app.post('/feedback/salvar', async (req, res) => {
       professor_id,
       texto: comentario_docente || '',
     });
-    res.redirect('/dashboard-professor/respostas');
+
+    // Volta para a tela de respostas já com a resposta avaliada aberta.
+    const resposta = await respostaModel.buscarPorId(resposta_id);
+    const q = new URLSearchParams({ id: String(professor_id), resposta_id: String(resposta_id) });
+    if (resposta) q.set('historia_id', String(resposta.historia_id));
+    res.redirect(`/dashboard-professor/respostas?${q.toString()}`);
   } catch (err) {
     console.error(err);
     res.status(500).send('Erro ao salvar feedback.');

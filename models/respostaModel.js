@@ -123,17 +123,20 @@ async function buscarPorId(id) {
   return rows[0] || null;
 }
 
-async function listarEnviadas() {
-  const { rows } = await pool.query(`
-    SELECT r.*, a.nome AS aluno_nome, a.turma AS aluno_turma,
-           h.codigo AS historia_codigo, h.titulo AS historia_titulo,
-           (SELECT COUNT(*)::int FROM comentario c WHERE c.resposta_id = r.id) AS total_comentarios
-    FROM resposta r
-    JOIN aluno a ON a.id = r.aluno_id
-    JOIN historia h ON h.id = r.historia_id
-    WHERE r.status = 'ENVIADA'
-    ORDER BY r.enviada_em DESC
-  `);
+// Se historia_id for informado, traz só as respostas daquela história.
+async function listarEnviadas(historia_id = null) {
+  const { rows } = await pool.query(
+    `SELECT r.*, a.nome AS aluno_nome, a.turma AS aluno_turma,
+            h.codigo AS historia_codigo, h.titulo AS historia_titulo,
+            (SELECT COUNT(*)::int FROM comentario c WHERE c.resposta_id = r.id) AS total_comentarios
+     FROM resposta r
+     JOIN aluno a ON a.id = r.aluno_id
+     JOIN historia h ON h.id = r.historia_id
+     WHERE r.status = 'ENVIADA'
+       AND ($1::bigint IS NULL OR r.historia_id = $1::bigint)
+     ORDER BY r.enviada_em DESC`,
+    [historia_id]
+  );
   return rows;
 }
 

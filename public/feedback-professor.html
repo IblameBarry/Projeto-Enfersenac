@@ -240,6 +240,12 @@
       fetch('/api/respostas/' + encodeURIComponent(respostaId))
         .then(response => { if (!response.ok) throw new Error('Resposta não encontrada'); return response.json(); })
         .then(resposta => {
+          // "Voltar às respostas" e "Cancelar" reabrem a mesma resposta na lista da história.
+          const voltarQ = new URLSearchParams({ resposta_id: String(resposta.id), historia_id: String(resposta.historia_id) });
+          if (professorId) voltarQ.set('id', professorId);
+          if (emailParam) voltarQ.set('email', emailParam);
+          document.querySelectorAll('a[href="/dashboard-professor/respostas"]').forEach(a => { a.href = '/dashboard-professor/respostas?' + voltarQ.toString(); });
+
           const heading = document.querySelector('.eval-form');
           if (heading) {
             const info = document.createElement('p');
