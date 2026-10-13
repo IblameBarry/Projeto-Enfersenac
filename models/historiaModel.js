@@ -1,4 +1,4 @@
-const { pool } = require('../database/db');
+const { pool, APP_TIMEZONE } = require('../database/db');
 
 function gerarCodigo() {
   const sufixo = Math.floor(1000 + Math.random() * 9000);
@@ -21,9 +21,10 @@ async function listarAtivasParaTurma(turma) {
     `SELECT * FROM historia
      WHERE status = 'ATIVA'
        AND (turma IS NULL OR turma = $1)
-       AND (data_expiracao IS NULL OR data_expiracao >= CURRENT_DATE)
+       -- "Hoje" no fuso local (CURRENT_DATE seria o dia em UTC, que vira ~20h no MS).
+       AND (data_expiracao IS NULL OR data_expiracao >= (CURRENT_TIMESTAMP AT TIME ZONE $2)::date)
      ORDER BY data_publicacao DESC`,
-    [turma]
+    [turma, APP_TIMEZONE]
   );
   return rows;
 }

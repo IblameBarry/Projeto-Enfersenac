@@ -220,7 +220,15 @@
 
     const tbody = document.getElementById('historiasPublicadas');
     const vazio = document.getElementById('historiasVazio');
-    const dataFmt = value => value ? new Date(value).toLocaleDateString('pt-BR') : 'Sem prazo';
+    // Datas puras ("AAAA-MM-DD", ex.: expiração) são formatadas pela string: new Date() as leria como
+    // meia-noite UTC e mostraria o dia anterior. Data e hora (ex.: publicação) vêm em UTC e viram hora local.
+    const dataFmt = value => {
+      if (!value) return 'Sem prazo';
+      const soData = String(value).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (soData) return `${soData[3]}/${soData[2]}/${soData[1]}`;
+      const d = new Date(value);
+      return Number.isNaN(d.getTime()) ? String(value) : d.toLocaleDateString('pt-BR');
+    };
     async function carregarHistorias() {
       if (!professorId) { vazio.querySelector('.empty-text').textContent = 'Não foi possível identificar o professor. Entre novamente pela tela de login.'; return; }
       try {

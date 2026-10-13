@@ -14,7 +14,12 @@ types.setTypeParser(20, (value) => {
   return Number.isSafeInteger(parsed) ? parsed : value;
 });
 types.setTypeParser(1082, (value) => value);
-types.setTypeParser(1114, (value) => value);
+// TIMESTAMP sem fuso: o banco grava em UTC (ver SET TIME ZONE abaixo). Devolve em ISO com "Z"
+// ("2026-10-13T19:37:00Z") para o navegador converter para a hora local do usuário.
+// Sem o "Z", o navegador lia o horário UTC como se fosse local e mostrava a hora adiantada.
+types.setTypeParser(1114, (value) => (
+  /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(\.\d+)?$/.test(value) ? `${value.replace(' ', 'T')}Z` : value
+));
 types.setTypeParser(1184, (value) => value);
 
 const connectionString = process.env.DATABASE_URL;
@@ -47,6 +52,17 @@ pool.on('error', (err) => {
   console.error('Erro inesperado na conexão PostgreSQL:', err.message);
 });
 
+// Garante que CURRENT_TIMESTAMP grave em UTC (padrão do Supabase), seja qual for o fuso do banco.
+pool.on('connect', (client) => {
+  client.query("SET TIME ZONE 'UTC'").catch((err) => {
+    console.error('Não foi possível definir o fuso UTC na conexão:', err.message);
+  });
+});
+
+// Fuso usado para saber "que dia é hoje" (ex.: prazo de expiração das histórias).
+// Padrão: Mato Grosso do Sul. Pode ser trocado pela variável APP_TIMEZONE.
+const APP_TIMEZONE = process.env.APP_TIMEZONE || 'America/Campo_Grande';
+
 async function testConnection() {
   try {
     const { rows } = await pool.query(
@@ -60,4 +76,4 @@ async function testConnection() {
   }
 }
 
-module.exports = { pool, testConnection };
+module.exports = { pool, testConnection, APP_TIMEZONE };

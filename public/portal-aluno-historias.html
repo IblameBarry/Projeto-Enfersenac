@@ -207,8 +207,10 @@
         if(!response.ok)throw new Error('Não foi possível buscar as histórias.');
         const historias=await response.json(); if(minhaBusca!==buscaAtual)return;
         const respostaPorHistoria=new Map(respostas.map(r=>[String(r.historia_id),r]));
-        const hoje=new Date(); const hojeKey=[hoje.getFullYear(),String(hoje.getMonth()+1).padStart(2,'0'),String(hoje.getDate()).padStart(2,'0')].join('-');
-        const doDia=historias.filter(h=>h.origem==='PROFESSOR' && h.data_publicacao && String(h.data_publicacao).slice(0,10)===hojeKey);
+        // Compara pelo dia LOCAL: data_publicacao vem em UTC ("...Z"), e o dia em UTC vira ~20h no MS.
+        const diaLocal=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+        const hojeKey=diaLocal(new Date());
+        const doDia=historias.filter(h=>{if(h.origem!=='PROFESSOR'||!h.data_publicacao)return false;const d=new Date(h.data_publicacao);return !Number.isNaN(d.getTime())&&diaLocal(d)===hojeKey;});
         list.replaceChildren(); message.textContent='';
         if(!doDia.length) message.textContent='Nenhuma história do professor foi publicada hoje para sua turma.';
         doDia.forEach(h=>list.appendChild(criarCardHistoria(h,respostaPorHistoria.get(String(h.id)))));
