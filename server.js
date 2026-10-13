@@ -174,6 +174,30 @@ app.get('/api/alunos/:id/respostas', async (req, res) => {
   }
 });
 
+// Feedback do professor para o aluno em uma história específica (portal do aluno → "Ver feedback").
+app.get('/api/alunos/:id/historias/:historiaId/feedback', async (req, res) => {
+  try {
+    const { id, historiaId } = req.params;
+    if (!/^\d+$/.test(String(id)) || !/^\d+$/.test(String(historiaId))) {
+      return res.status(400).json({ erro: 'ID de aluno ou de história inválido.' });
+    }
+    const resposta = await respostaModel.buscarPorAlunoHistoria(id, historiaId);
+    if (!resposta) return res.status(404).json({ erro: 'Você ainda não respondeu esta história.' });
+    const historia = await historiaModel.buscarPorId(historiaId);
+    const feedbacks = await comentarioModel.listarVisiveisParaAluno(id, historiaId);
+    res.json({
+      historia_titulo: historia ? historia.titulo : null,
+      historia_codigo: historia ? historia.codigo : null,
+      status: resposta.status,
+      enviada_em: resposta.enviada_em,
+      feedbacks,
+    });
+  } catch (err) {
+    console.error('Erro ao buscar feedback do aluno:', err);
+    res.status(500).json({ erro: 'Erro ao buscar o feedback.' });
+  }
+});
+
 // Respostas enviadas pelos alunos (para a tela "respostas do professor").
 // Aceita ?historia_id= para listar só as respostas da história selecionada.
 app.get('/api/respostas', async (req, res) => {
@@ -319,7 +343,7 @@ app.post('/feedback/salvar', async (req, res) => {
       resposta_id,
       professor_id,
       texto: comentario_docente || '',
-      body: req.body, // nota_final, criterios e checkboxes do formulário
+      body: req.body, // competências, conceito_final e checkboxes do formulário
     });
 
     // Volta para a tela de respostas já com a resposta avaliada aberta.

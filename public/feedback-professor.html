@@ -118,7 +118,7 @@
 
         <div class="card-inner">
           <h2 class="card-heading">Registro de Avaliação & Feedback Docente</h2>
-          <p class="card-subheading">Atribua a pontuação por competência e elabore as orientações pedagógicas para a aluna.</p>
+          <p class="card-subheading">Avalie cada competência conforme o modelo pedagógico Senac (Atendido, Parcialmente Atendido ou Não Atendido) e elabore as orientações pedagógicas para o aluno.</p>
 
           <form action="/feedback/salvar" method="POST" class="eval-form">
             <input type="hidden" name="professor_id" id="feedbackProfessorId">
@@ -137,10 +137,9 @@
                   </div>
                   <select name="criterio_triagem" id="criterio_triagem" class="select-score" required>
                     <option value="" disabled selected>Selecione…</option>
-                    <option value="excelente">Excelente (100%)</option>
-                    <option value="adequado">Adequado (80%)</option>
-                    <option value="regular">Regular (60%)</option>
-                    <option value="insuficiente">Insuficiente (40%)</option>
+                    <option value="atendido">Atendido</option>
+                    <option value="parcial">Parcialmente Atendido</option>
+                    <option value="nao_atendido">Não Atendido</option>
                   </select>
                 </div>
 
@@ -152,10 +151,9 @@
                   </div>
                   <select name="criterio_diagnostico" id="criterio_diagnostico" class="select-score" required>
                     <option value="" disabled selected>Selecione…</option>
-                    <option value="excelente">Excelente (100%)</option>
-                    <option value="adequado">Adequado (80%)</option>
-                    <option value="regular">Regular (60%)</option>
-                    <option value="insuficiente">Insuficiente (40%)</option>
+                    <option value="atendido">Atendido</option>
+                    <option value="parcial">Parcialmente Atendido</option>
+                    <option value="nao_atendido">Não Atendido</option>
                   </select>
                 </div>
 
@@ -167,19 +165,23 @@
                   </div>
                   <select name="criterio_conduta" id="criterio_conduta" class="select-score" required>
                     <option value="" disabled selected>Selecione…</option>
-                    <option value="excelente">Excelente (100%)</option>
-                    <option value="adequado">Adequado (80%)</option>
-                    <option value="regular">Regular (60%)</option>
-                    <option value="insuficiente">Insuficiente (40%)</option>
+                    <option value="atendido">Atendido</option>
+                    <option value="parcial">Parcialmente Atendido</option>
+                    <option value="nao_atendido">Não Atendido</option>
                   </select>
                 </div>
               </div>
             </div>
 
-            <!-- NOTA / CONCEITO FINAL -->
+            <!-- CONCEITO FINAL (modelo pedagógico Senac) -->
             <div class="grade-input-box">
-              <label for="nota_final" class="grade-label">Nota Final / Conceito (0 a 10):</label>
-              <input type="number" id="nota_final" name="nota_final" class="input-grade" placeholder="0–10" step="0.5" min="0" max="10" required>
+              <label for="conceito_final" class="grade-label">Conceito Final:</label>
+              <select id="conceito_final" name="conceito_final" class="select-score select-grade" required>
+                <option value="" disabled selected>Selecione…</option>
+                <option value="atendido">Atendido</option>
+                <option value="parcial">Parcialmente Atendido</option>
+                <option value="nao_atendido">Não Atendido</option>
+              </select>
             </div>
 
             <!-- PARECER PEDAGÓGICO / FEEDBACK DETALHADO -->
@@ -278,9 +280,11 @@
       if (!meus.length) return;
       const c = meus[meus.length - 1];
       document.getElementById('comentario_docente').value = c.texto || '';
-      if (temValor(c.nota_final)) document.getElementById('nota_final').value = Number(c.nota_final);
-      ['criterio_triagem', 'criterio_diagnostico', 'criterio_conduta'].forEach(nome => {
-        if (c[nome]) document.getElementById(nome).value = c[nome];
+      // Feedbacks antigos (escala excelente/adequado/…) não têm opção equivalente:
+      // o campo fica em "Selecione…" para o professor reavaliar no modelo atual.
+      ['criterio_triagem', 'criterio_diagnostico', 'criterio_conduta', 'conceito_final'].forEach(nome => {
+        const campo = document.getElementById(nome);
+        if (c[nome] && [...campo.options].some(o => o.value === c[nome])) campo.value = c[nome];
       });
       if (typeof c.notificar_aluno === 'boolean') document.getElementById('notificar_aluno').checked = c.notificar_aluno;
       if (typeof c.liberar_revisao === 'boolean') document.getElementById('liberar_revisao').checked = c.liberar_revisao;
@@ -326,6 +330,6 @@
       }
     });
   </script>
-  <style>.selected-answer-context{padding:12px 14px;margin:0 0 16px;border:1px solid #d7e2e8;border-radius:8px;background:#f3f7f9;color:#354e5d;line-height:1.5}.eval-form input,.eval-form textarea,.eval-form select{border-color:#cbd5dc}.eval-form button{filter:saturate(.9)}.input-grade::placeholder{color:#cbd5e1;font-weight:500}</style>
+  <style>.selected-answer-context{padding:12px 14px;margin:0 0 16px;border:1px solid #d7e2e8;border-radius:8px;background:#f3f7f9;color:#354e5d;line-height:1.5}.eval-form input,.eval-form textarea,.eval-form select{border-color:#cbd5dc}.eval-form button{filter:saturate(.9)}.eval-form .select-grade{font-size:.85rem;color:#c2410c;border-color:#f97316}</style>
 </body>
 </html>

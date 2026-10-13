@@ -130,16 +130,19 @@ CREATE TABLE IF NOT EXISTS public.comentario (
     criterio_triagem VARCHAR(20),
     criterio_diagnostico VARCHAR(20),
     criterio_conduta VARCHAR(20),
+    conceito_final VARCHAR(20),
     notificar_aluno BOOLEAN NOT NULL DEFAULT TRUE,
     liberar_revisao BOOLEAN NOT NULL DEFAULT FALSE,
     criado_em TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     atualizado_em TIMESTAMP(0) WITHOUT TIME ZONE,
     CONSTRAINT ck_comentario_nota CHECK (nota_final IS NULL OR nota_final BETWEEN 0 AND 10),
+    -- Valores atuais (modelo Senac) + antigos, mantidos para feedbacks já registrados.
     CONSTRAINT ck_comentario_criterios CHECK (
-        (criterio_triagem IS NULL OR criterio_triagem IN ('excelente', 'adequado', 'regular', 'insuficiente')) AND
-        (criterio_diagnostico IS NULL OR criterio_diagnostico IN ('excelente', 'adequado', 'regular', 'insuficiente')) AND
-        (criterio_conduta IS NULL OR criterio_conduta IN ('excelente', 'adequado', 'regular', 'insuficiente'))
+        (criterio_triagem IS NULL OR criterio_triagem IN ('atendido', 'parcial', 'nao_atendido', 'excelente', 'adequado', 'regular', 'insuficiente')) AND
+        (criterio_diagnostico IS NULL OR criterio_diagnostico IN ('atendido', 'parcial', 'nao_atendido', 'excelente', 'adequado', 'regular', 'insuficiente')) AND
+        (criterio_conduta IS NULL OR criterio_conduta IN ('atendido', 'parcial', 'nao_atendido', 'excelente', 'adequado', 'regular', 'insuficiente'))
     ),
+    CONSTRAINT ck_comentario_conceito CHECK (conceito_final IS NULL OR conceito_final IN ('atendido', 'parcial', 'nao_atendido')),
     CONSTRAINT fk_comentario_resposta FOREIGN KEY (resposta_id) REFERENCES public.resposta(id) ON DELETE CASCADE,
     CONSTRAINT fk_comentario_professor FOREIGN KEY (professor_id) REFERENCES public.professor(id)
 );

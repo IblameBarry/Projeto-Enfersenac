@@ -142,9 +142,10 @@ async function listarEnviadas(historia_id = null) {
 
 async function listarPorAluno(aluno_id) {
   const { rows } = await pool.query(
-    `SELECT r.id, r.status, r.criado_em, r.enviada_em, r.lida_em,
-            h.codigo AS historia_codigo, h.titulo AS historia_titulo,
-            (SELECT COUNT(*)::int FROM comentario c WHERE c.resposta_id = r.id) AS total_comentarios
+    `SELECT r.id, r.historia_id, r.status, r.criado_em, r.enviada_em, r.lida_em,
+            h.codigo AS historia_codigo, h.titulo AS historia_titulo, h.data_expiracao AS historia_data_expiracao,
+            (SELECT COUNT(*)::int FROM comentario c WHERE c.resposta_id = r.id) AS total_comentarios,
+            (SELECT COUNT(*)::int FROM comentario c WHERE c.resposta_id = r.id AND c.notificar_aluno) AS total_feedbacks_visiveis
      FROM resposta r
      JOIN historia h ON h.id = r.historia_id
      WHERE r.aluno_id = $1

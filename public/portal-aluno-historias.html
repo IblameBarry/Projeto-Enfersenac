@@ -85,6 +85,11 @@
             <div class="published-heading"><div><h3>Histórias publicadas hoje</h3><p>Selecione a atividade que seu professor disponibilizou.</p></div><button type="button" class="back-choice" id="voltarEscolhas">Voltar</button></div>
             <div class="published-list" id="listaHistoriasDoDia"></div>
             <p class="stories-message" id="mensagemHistorias" role="status"></p>
+            <!-- Histórias de outros dias que o aluno já enviou (para poder consultar o feedback depois) -->
+            <div class="answered-stories" id="historiasRespondidas" hidden>
+              <h4 class="answered-heading">Histórias que você já respondeu</h4>
+              <div class="published-list" id="listaHistoriasRespondidas"></div>
+            </div>
           </section>
 
           <!-- BLOCOS INFORMATIVOS INFERIORES -->
@@ -117,6 +122,24 @@
 
   </div>
 
+  <!-- MODAL: FEEDBACK DO PROFESSOR -->
+  <dialog class="feedback-dialog" id="feedbackDialog" aria-labelledby="feedbackTitulo">
+    <div class="card-strip">
+      <span class="strip-blue"></span>
+      <span class="strip-orange"></span>
+    </div>
+    <div class="feedback-dialog-inner">
+      <div class="feedback-dialog-head">
+        <div>
+          <h3 id="feedbackTitulo">Feedback do professor</h3>
+          <p class="feedback-dialog-sub" id="feedbackHistoria"></p>
+        </div>
+        <button type="button" class="feedback-close" id="fecharFeedback" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="feedbackConteudo" aria-live="polite"></div>
+    </div>
+  </dialog>
+
   <script>
     const params = new URLSearchParams(location.search);
     const nome = params.get('nome') || sessionStorage.getItem('aluno_nome'); const turma = params.get('turma') || sessionStorage.getItem('aluno_turma'); const alunoId = params.get('id') || params.get('aluno_id') || sessionStorage.getItem('aluno_id');
@@ -128,28 +151,118 @@
     if (!alunoId) { document.getElementById('alunoNome').textContent='Sessão não identificada'; document.getElementById('welcomeNome').textContent='aluno'; }
     const panel=document.getElementById('historiasDoDia'), list=document.getElementById('listaHistoriasDoDia'), message=document.getElementById('mensagemHistorias');
     const goToStory = id => { if(!alunoId){ alert('Não foi possível identificar seu cadastro. Faça login novamente.'); return; } const q=new URLSearchParams({id:alunoId,historia_id:id}); if(nome)q.set('nome',nome); if(turma)q.set('turma',turma); location.href='/aluno/prontuario?'+q.toString(); };
+    const answeredBox=document.getElementById('historiasRespondidas'), answeredList=document.getElementById('listaHistoriasRespondidas');
+    // data_expiracao vem como "AAAA-MM-DD"; formatar pela string evita o dia "voltar" por causa do fuso.
+    const prazoTexto = data => data ? 'Prazo: '+String(data).slice(0,10).split('-').reverse().join('/') : 'Sem prazo';
+
+    // Card compacto (título + prazo). Ao clicar, abre as opções "Ver história" e "Ver feedback";
+    // "Ver feedback" só fica habilitado quando o professor já registrou feedback para este aluno nesta história.
+    function criarCardHistoria({ id, titulo, data_expiracao }, resposta) {
+      const temFeedback = Boolean(resposta && Number(resposta.total_feedbacks_visiveis) > 0);
+      const card=document.createElement('div');card.className='published-story-card';
+
+      const toggle=document.createElement('button');toggle.type='button';toggle.className='story-toggle';toggle.setAttribute('aria-expanded','false');
+      const icon=document.createElement('span');icon.className='story-icon';icon.innerHTML='<i class="fa-regular fa-clipboard"></i>';
+      const info=document.createElement('span');info.className='story-info';
+      const title=document.createElement('strong');title.className='story-title';title.textContent=titulo;
+      const meta=document.createElement('span');meta.className='story-meta';meta.textContent=prazoTexto(data_expiracao);
+      info.append(title,meta);
+      if (temFeedback) { const badge=document.createElement('span');badge.className='story-badge';badge.textContent='Feedback disponível';info.append(badge); }
+      else if (resposta && resposta.status==='ENVIADA') { const badge=document.createElement('span');badge.className='story-badge story-badge-muted';badge.textContent='Aguardando feedback';info.append(badge); }
+      const arrow=document.createElement('span');arrow.className='story-arrow';arrow.innerHTML='<i class="fa-solid fa-chevron-down"></i>';
+      toggle.append(icon,info,arrow);
+
+      const actions=document.createElement('div');actions.className='story-actions';actions.hidden=true;
+      const verHistoria=document.createElement('button');verHistoria.type='button';verHistoria.className='story-action story-action-primary';
+      verHistoria.innerHTML='<i class="fa-regular fa-file-lines"></i> Ver história';
+      verHistoria.addEventListener('click',()=>goToStory(id));
+      const verFeedback=document.createElement('button');verFeedback.type='button';verFeedback.className='story-action';
+      verFeedback.innerHTML='<i class="fa-regular fa-comment-dots"></i> Ver feedback';
+      verFeedback.disabled=!temFeedback;
+      verFeedback.title=temFeedback?'Ver o feedback do professor':'O professor ainda não registrou feedback para esta história.';
+      verFeedback.addEventListener('click',()=>abrirFeedback(id,titulo));
+      actions.append(verHistoria,verFeedback);
+
+      toggle.addEventListener('click',()=>{
+        const abrir=actions.hidden;
+        actions.hidden=!abrir;toggle.setAttribute('aria-expanded',String(abrir));card.classList.toggle('open',abrir);
+      });
+      card.append(toggle,actions);
+      return card;
+    }
+
     // Cada clique gera uma nova busca; só a mais recente desenha a lista.
     // (Antes, dois cliques rápidos faziam as duas buscas adicionarem cards e a lista duplicava.)
     let buscaAtual=0;
     document.getElementById('escolherProfessor').addEventListener('click', async()=>{
       const minhaBusca=++buscaAtual;
-      panel.hidden=false; list.replaceChildren(); message.textContent='Carregando histórias…';
-      try { const url='/api/historias'+(turma?'?turma='+encodeURIComponent(turma):''); const response=await fetch(url); if(!response.ok)throw new Error('Não foi possível buscar as histórias.'); const historias=await response.json(); if(minhaBusca!==buscaAtual)return; const hoje=new Date(); const hojeKey=[hoje.getFullYear(),String(hoje.getMonth()+1).padStart(2,'0'),String(hoje.getDate()).padStart(2,'0')].join('-'); const doDia=historias.filter(h=>h.origem==='PROFESSOR' && h.data_publicacao && String(h.data_publicacao).slice(0,10)===hojeKey);
-      list.replaceChildren(); message.textContent=''; if(!doDia.length){message.textContent='Nenhuma história do professor foi publicada hoje para sua turma.';return;} doDia.forEach(h=>{
-        // Card compacto: só o título e o prazo (o enunciado completo aparece no prontuário).
-        const card=document.createElement('button');card.type='button';card.className='published-story-card';card.title='Começar: '+h.titulo;
-        const icon=document.createElement('span');icon.className='story-icon';icon.innerHTML='<i class="fa-regular fa-clipboard"></i>';
-        const info=document.createElement('span');info.className='story-info';
-        const title=document.createElement('strong');title.className='story-title';title.textContent=h.titulo;
-        // data_expiracao vem como "AAAA-MM-DD"; formatar pela string evita o dia "voltar" por causa do fuso.
-        const meta=document.createElement('span');meta.className='story-meta';meta.textContent=h.data_expiracao?'Prazo: '+String(h.data_expiracao).slice(0,10).split('-').reverse().join('/'):'Sem prazo';
-        info.append(title,meta);
-        const arrow=document.createElement('span');arrow.className='story-arrow';arrow.innerHTML='<i class="fa-solid fa-arrow-right"></i>';
-        card.append(icon,info,arrow);card.addEventListener('click',()=>goToStory(h.id));list.appendChild(card);
-      });
+      panel.hidden=false; list.replaceChildren(); answeredList.replaceChildren(); answeredBox.hidden=true; message.textContent='Carregando histórias…';
+      try {
+        const url='/api/historias'+(turma?'?turma='+encodeURIComponent(turma):'');
+        // As respostas do aluno dizem quais histórias já têm feedback (se falhar, os cards aparecem sem feedback).
+        const [response,respostas]=await Promise.all([
+          fetch(url),
+          alunoId ? fetch('/api/alunos/'+encodeURIComponent(alunoId)+'/respostas').then(r=>r.ok?r.json():[]).catch(()=>[]) : Promise.resolve([]),
+        ]);
+        if(!response.ok)throw new Error('Não foi possível buscar as histórias.');
+        const historias=await response.json(); if(minhaBusca!==buscaAtual)return;
+        const respostaPorHistoria=new Map(respostas.map(r=>[String(r.historia_id),r]));
+        const hoje=new Date(); const hojeKey=[hoje.getFullYear(),String(hoje.getMonth()+1).padStart(2,'0'),String(hoje.getDate()).padStart(2,'0')].join('-');
+        const doDia=historias.filter(h=>h.origem==='PROFESSOR' && h.data_publicacao && String(h.data_publicacao).slice(0,10)===hojeKey);
+        list.replaceChildren(); message.textContent='';
+        if(!doDia.length) message.textContent='Nenhuma história do professor foi publicada hoje para sua turma.';
+        doDia.forEach(h=>list.appendChild(criarCardHistoria(h,respostaPorHistoria.get(String(h.id)))));
+        // Histórias de outros dias já enviadas continuam acessíveis para consultar o feedback.
+        const idsDoDia=new Set(doDia.map(h=>String(h.id)));
+        const anteriores=respostas.filter(r=>r.status==='ENVIADA' && !idsDoDia.has(String(r.historia_id)));
+        anteriores.forEach(r=>answeredList.appendChild(criarCardHistoria({id:r.historia_id,titulo:r.historia_titulo,data_expiracao:r.historia_data_expiracao},r)));
+        answeredBox.hidden=!anteriores.length;
       } catch(e){ if(minhaBusca===buscaAtual) message.textContent=e.message; }
     });
     document.getElementById('voltarEscolhas').addEventListener('click',()=>{panel.hidden=true;});
+
+    /* ---------- Modal de feedback do professor ---------- */
+    const dialog=document.getElementById('feedbackDialog'), dialogConteudo=document.getElementById('feedbackConteudo'), dialogHistoria=document.getElementById('feedbackHistoria');
+    const CONCEITOS={atendido:'Atendido',parcial:'Parcialmente Atendido',nao_atendido:'Não Atendido',excelente:'Excelente',adequado:'Adequado',regular:'Regular',insuficiente:'Insuficiente'};
+    const COMPETENCIAS=[['criterio_triagem','Precisão da Triagem'],['criterio_diagnostico','Raciocínio Diagnóstico'],['criterio_conduta','Condutas e Prescrições']];
+    const el=(tag,className,text)=>{const n=document.createElement(tag);if(className)n.className=className;if(text!==undefined)n.textContent=text;return n;};
+    const dataHora=v=>{const d=v?new Date(String(v).replace(' ','T')):null;return d&&!Number.isNaN(d.getTime())?d.toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}):'';};
+    const conceitoChip=valor=>el('span','conceito conceito-'+(valor||'vazio'),CONCEITOS[valor]||valor||'Não avaliado');
+
+    function renderFeedback(f){
+      const item=el('article','feedback-item');
+      const quando=f.atualizado_em?'Atualizado em '+dataHora(f.atualizado_em):dataHora(f.criado_em);
+      item.append(el('p','feedback-autor',(f.professor_nome||'Professor')+(quando?' · '+quando:'')));
+      if(f.conceito_final){const linha=el('div','feedback-final');linha.append(el('span','','Conceito final'),conceitoChip(f.conceito_final));item.append(linha);}
+      else if(f.nota_final!==null&&f.nota_final!==undefined){const linha=el('div','feedback-final');linha.append(el('span','','Nota final'),el('span','conceito',Number(f.nota_final).toLocaleString('pt-BR',{minimumFractionDigits:1})));item.append(linha);}
+      const avaliadas=COMPETENCIAS.filter(([campo])=>f[campo]);
+      if(avaliadas.length){
+        const lista=el('ul','feedback-competencias');
+        avaliadas.forEach(([campo,nomeCompetencia])=>{const li=el('li');li.append(el('span','',nomeCompetencia),conceitoChip(f[campo]));lista.append(li);});
+        item.append(el('h4','feedback-subtitulo','Competências avaliadas'),lista);
+      }
+      item.append(el('h4','feedback-subtitulo','Parecer e orientações'),el('p','feedback-texto',f.texto||'Sem parecer descritivo.'));
+      if(f.liberar_revisao) item.append(el('p','feedback-aviso','O professor liberou o reenvio de uma nova versão deste prontuário.'));
+      return item;
+    }
+
+    async function abrirFeedback(historiaId,titulo){
+      if(!alunoId){alert('Faça login novamente para continuar.');return;}
+      dialogHistoria.textContent=titulo||'';
+      dialogConteudo.replaceChildren(el('p','feedback-vazio','Carregando feedback…'));
+      dialog.showModal();
+      try{
+        const res=await fetch('/api/alunos/'+encodeURIComponent(alunoId)+'/historias/'+encodeURIComponent(historiaId)+'/feedback');
+        const dados=await res.json().catch(()=>({}));
+        if(!res.ok)throw new Error(dados.erro||'Não foi possível carregar o feedback.');
+        if(dados.historia_titulo) dialogHistoria.textContent=dados.historia_titulo;
+        if(!dados.feedbacks||!dados.feedbacks.length){dialogConteudo.replaceChildren(el('p','feedback-vazio','O professor ainda não registrou feedback para esta história.'));return;}
+        dialogConteudo.replaceChildren(...dados.feedbacks.map(renderFeedback));
+      }catch(e){dialogConteudo.replaceChildren(el('p','feedback-vazio',e.message));}
+    }
+    document.getElementById('fecharFeedback').addEventListener('click',()=>dialog.close());
+    // Clique fora do conteúdo (no fundo escurecido) também fecha.
+    dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close();});
     document.getElementById('escolherAleatoria').addEventListener('click',async()=>{if(!alunoId){alert('Faça login novamente para continuar.');return;} try{const response=await fetch('/api/historias'+(turma?'?turma='+encodeURIComponent(turma):''));if(!response.ok)throw new Error();const historias=await response.json();if(!historias.length){alert('Não há histórias disponíveis no momento.');return;}const escolhida=historias[Math.floor(Math.random()*historias.length)];goToStory(escolhida.id);}catch{alert('Não foi possível carregar as histórias. Tente novamente.');}});
   </script>
 </body>

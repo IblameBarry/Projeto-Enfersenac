@@ -317,7 +317,7 @@ function completo(r) {
     ['Conduta de enfermagem', [
       ['Diagnóstico de enfermagem', r.diagnostico_enfermagem, true], ['Intervenção prioritária', r.intervencao_prioritaria, true],
       ['Próxima avaliação', r.proxima_avaliacao], ['Encaminhamento', r.encaminhamento],
-      ['Conclusão da avaliação clínica', r.conclusao_clinica, true]]],
+      ['Alterações e intervenções da enfermagem', r.conclusao_clinica, true]]],
     ['Declarações e assinaturas', [
       ['Declaração ética da anamnese', simNao(r.declaracao_etica)], ['Declaração de responsabilidade', simNao(r.declaracao_responsabilidade)],
       ['Assinatura do aluno', r.assinatura_aluno], ['Assinatura do professor', r.assinatura_professor]]],
@@ -330,11 +330,16 @@ function completo(r) {
   return fields;
 }
 
-const NIVEIS = { excelente: 'Excelente', adequado: 'Adequado', regular: 'Regular', insuficiente: 'Insuficiente' };
-// Linha com a nota final e as competências avaliadas (null se o feedback não tiver avaliação).
+// Modelo pedagógico Senac + rótulos da escala antiga (feedbacks registrados antes da mudança).
+const NIVEIS = {
+  atendido: 'Atendido', parcial: 'Parcialmente Atendido', nao_atendido: 'Não Atendido',
+  excelente: 'Excelente', adequado: 'Adequado', regular: 'Regular', insuficiente: 'Insuficiente',
+};
+// Linha com o conceito final e as competências avaliadas (null se o feedback não tiver avaliação).
 function avaliacaoDe(c) {
   const chips = [];
-  if (!vazio(c.nota_final)) chips.push(['Nota', Number(c.nota_final).toLocaleString('pt-BR', { minimumFractionDigits: 1 }), true]);
+  if (c.conceito_final) chips.push(['Conceito final', NIVEIS[c.conceito_final] || c.conceito_final, true]);
+  else if (!vazio(c.nota_final)) chips.push(['Nota', Number(c.nota_final).toLocaleString('pt-BR', { minimumFractionDigits: 1 }), true]);
   [['Triagem', c.criterio_triagem], ['Diagnóstico', c.criterio_diagnostico], ['Conduta', c.criterio_conduta]]
     .forEach(([nome, nivel]) => { if (nivel) chips.push([nome, NIVEIS[nivel] || nivel]); });
   if (!chips.length) return null;
@@ -382,7 +387,8 @@ function renderDetail() {
     r.comentarios.forEach(c => {
       const item = el('div', 'comment');
       const quando = c.atualizado_em ? 'editado ' + dataEnvio(c.atualizado_em) : dataEnvio(c.criado_em);
-      item.append(el('small', '', (c.professor_nome || 'Professor') + ' · ' + quando));
+      const visibilidade = c.notificar_aluno === false ? ' · não enviado ao portal do aluno' : '';
+      item.append(el('small', '', (c.professor_nome || 'Professor') + ' · ' + quando + visibilidade));
       const notas = avaliacaoDe(c);
       if (notas) item.append(notas);
       item.append(document.createTextNode(c.texto || ''));
