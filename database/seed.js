@@ -1,51 +1,19 @@
 'use strict';
 
 const { pool } = require('./db');
-const bcrypt = require('bcrypt');
+const { aplicarMigracoes } = require('./migrate');
 const historiaModel = require('../models/historiaModel');
+const professorModel = require('../models/professorModel');
 
-const EMAIL_TESTE = 'prof.carlos@ms.senac.br';
-const EMAIL_ANTIGO = 'prof.carlos@senac.br';
-const SENHA_TESTE = 'Senac123';
-const NOME_PROFESSOR = 'Carlos Souza';
 const TITULO_HISTORIA = 'Lesão por pressão em paciente têxtil';
 
 async function seed() {
   try {
-    const senha_hash = await bcrypt.hash(SENHA_TESTE, 10);
-
-    // Migra a conta de demonstração antiga e garante credenciais válidas.
-    const existente = await pool.query(
-      'SELECT id FROM professor WHERE lower(email) IN ($1, $2) ORDER BY id LIMIT 1',
-      [EMAIL_TESTE, EMAIL_ANTIGO]
-    );
-
-    let professor;
-    if (existente.rows.length) {
-      const atualizado = await pool.query(
-        `UPDATE professor
-         SET nome = $1, email = $2, senha_hash = $3, ativo = TRUE
-         WHERE id = $4
-         RETURNING id, nome, email`,
-        [NOME_PROFESSOR, EMAIL_TESTE, senha_hash, existente.rows[0].id]
-      );
-      professor = atualizado.rows[0];
-      // Remove eventual conta de demonstração duplicada, sem tocar em outros professores.
-      await pool.query(
-        'DELETE FROM professor WHERE lower(email) = $1 AND id <> $2',
-        [EMAIL_ANTIGO, professor.id]
-      );
-      console.log('Conta de demonstração atualizada:', EMAIL_TESTE);
-    } else {
-      const criado = await pool.query(
-        `INSERT INTO professor (nome, email, senha_hash, ativo)
-         VALUES ($1, $2, $3, TRUE)
-         RETURNING id, nome, email`,
-        [NOME_PROFESSOR, EMAIL_TESTE, senha_hash]
-      );
-      professor = criado.rows[0];
-      console.log('Conta de demonstração criada:', EMAIL_TESTE);
-    }
+    await aplicarMigracoes(); // garante a coluna professor.admin
+    // Conta administradora (Nathan). Converte a antiga conta de demonstração do Carlos, se existir.
+    const acao = await professorModel.garantirAdministrador();
+    console.log(`Conta administradora (${professorModel.ADMIN.email}) ${acao}.`);
+    const professor = await professorModel.buscarPorEmail(professorModel.ADMIN.email);
 
     const { rows } = await pool.query(
       `SELECT id, codigo, titulo FROM historia

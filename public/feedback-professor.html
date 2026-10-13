@@ -30,15 +30,15 @@
       <div class="navbar-right">
         <div class="user-profile">
           <div class="user-meta">
-            <span class="user-name" id="profNome">Prof. Carlos Souza</span>
-            <span class="user-email" id="profEmail">prof.carlos@ms.senac.br</span>
+            <span class="user-name" id="profNome">Professor</span>
+            <span class="user-email" id="profEmail"></span>
           </div>
           <div class="user-avatar">
             <i class="fa-solid fa-user-tie"></i>
           </div>
         </div>
 
-        <a href="/" class="btn-logout" title="Sair">
+        <a href="/sair" class="btn-logout" title="Sair">
           <i class="fa-solid fa-arrow-right-from-bracket"></i>
           <span>Sair</span>
         </a>
@@ -244,7 +244,7 @@
     if (emailParam) {
       sessionStorage.setItem('professor_email', emailParam);
       document.getElementById('profEmail').textContent = emailParam;
-      document.getElementById('profNome').textContent = 'Prof. ' + emailParam.split('@')[0].replace(/^prof[._]/i, '').replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      document.getElementById('profNome').textContent = sessionStorage.getItem('professor_nome') || 'Prof. ' + emailParam.split('@')[0].replace(/^prof[._]/i, '').replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
     }
 
     // ---- Preenche o "Resumo do Aluno" com os dados reais da resposta ----

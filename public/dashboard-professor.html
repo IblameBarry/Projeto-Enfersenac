@@ -37,6 +37,7 @@
     .btn-modal:disabled{opacity:.5;cursor:not-allowed}
     .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);max-width:calc(100% - 32px);padding:12px 18px;border-radius:8px;background:#1e293b;color:#fff;font:500 .88rem Inter,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:10}
     .toast[hidden]{display:none}
+    .btn-logout[hidden]{display:none}
   </style>
 </head>
 <body>
@@ -53,8 +54,8 @@
       <div class="navbar-right">
         <div class="user-profile">
           <div class="user-meta">
-            <span class="user-name" id="profNome">Prof. Carlos Souza</span>
-            <span class="user-email" id="profEmail">prof.carlos@senac.br</span>
+            <span class="user-name" id="profNome">Professor</span>
+            <span class="user-email" id="profEmail"></span>
           </div>
           <!-- Avatar do Docente -->
           <div class="user-avatar">
@@ -62,7 +63,13 @@
           </div>
         </div>
 
-        <a href="/" class="btn-logout" title="Sair da conta">
+        <!-- Só aparece para o administrador (confirmado pelo servidor em /api/sessao) -->
+        <a href="/dashboard-professor/usuarios" class="btn-logout" id="linkAdmin" title="Cadastrar professores" hidden>
+          <i class="fa-solid fa-users-gear"></i>
+          <span>Professores</span>
+        </a>
+
+        <a href="/sair" class="btn-logout" title="Sair da conta">
           <i class="fa-solid fa-arrow-right-from-bracket"></i>
           <span>Sair</span>
         </a>
@@ -217,6 +224,10 @@
     document.querySelectorAll('a[href^="/dashboard-professor/respostas"], a[href^="/dashboard-professor/feedback"]').forEach(link => {
       const target = new URL(link.href); if (professorId) target.searchParams.set('id', professorId); if (email) target.searchParams.set('email', email); link.href = target.pathname + target.search;
     });
+
+    fetch('/api/sessao').then(r => r.ok ? r.json() : null).then(sessao => {
+      if (sessao && sessao.admin) document.getElementById('linkAdmin').hidden = false;
+    }).catch(() => {});
 
     const tbody = document.getElementById('historiasPublicadas');
     const vazio = document.getElementById('historiasVazio');

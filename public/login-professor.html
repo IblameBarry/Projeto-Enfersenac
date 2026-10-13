@@ -63,6 +63,7 @@
 
           <!-- Formulário -->
           <form action="/login/professor" method="POST" class="login-form">
+            <p class="login-erro" id="loginErro" role="alert" hidden></p>
             
             <!-- Campo de E-mail com Ícone -->
             <div class="form-group">
@@ -130,7 +131,17 @@
   </div>
 
   <!-- Script simples para alternar o mostrar/esconder da senha -->
+  <style>.login-erro{padding:10px 12px;border-radius:8px;background:#fef2f2;color:#b91c1c;font-size:.84rem;line-height:1.45}.login-erro[hidden]{display:none}</style>
   <script>
+    // Mensagem de erro devolvida pelo servidor (?erro=...).
+    const ERROS_LOGIN = {
+      'credenciais': 'E-mail ou senha incorretos.',
+      'email-corporativo': 'Use seu e-mail corporativo, terminando em @ms.senac.br.',
+      'admin': 'Entre com a conta administradora para acessar o cadastro de professores.',
+    };
+    const erroLogin = ERROS_LOGIN[new URLSearchParams(location.search).get('erro')];
+    if (erroLogin) { const aviso = document.getElementById('loginErro'); aviso.textContent = erroLogin; aviso.hidden = false; }
+
     const toggleBtn = document.getElementById('togglePass');
     const passInput = document.getElementById('senha');
     const eyeIcon = document.getElementById('eyeIcon');

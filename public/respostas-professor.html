@@ -126,12 +126,12 @@ button{font:inherit;cursor:pointer}
   <div class="navbar-right">
     <div class="user-profile">
       <div class="user-meta">
-        <span class="user-name" id="profNome">Prof. Carlos Souza</span>
-        <span class="user-email" id="profEmail">prof.carlos@ms.senac.br</span>
+        <span class="user-name" id="profNome">Professor</span>
+        <span class="user-email" id="profEmail"></span>
       </div>
       <div class="user-avatar"><i class="fa-solid fa-user-tie"></i></div>
     </div>
-    <a href="/" class="btn-logout" title="Sair da conta"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Sair</span></a>
+    <a href="/sair" class="btn-logout" title="Sair da conta"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Sair</span></a>
   </div>
 </header>
 
@@ -183,7 +183,7 @@ if (professorId) sessionStorage.setItem('professor_id', professorId);
 if (email) {
   sessionStorage.setItem('professor_email', email);
   document.getElementById('profEmail').textContent = email;
-  document.getElementById('profNome').textContent = 'Prof. ' + email.split('@')[0].replace(/^prof[._]/i, '').replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  document.getElementById('profNome').textContent = sessionStorage.getItem('professor_nome') || 'Prof. ' + email.split('@')[0].replace(/^prof[._]/i, '').replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
 const comProfessor = path => {

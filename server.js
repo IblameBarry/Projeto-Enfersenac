@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const crypto = require('node:crypto');
 
 // O .env é carregado dentro de database/db.js (sempre a partir da raiz do
 // projeto, independente de onde o "node" foi executado) — não precisa
@@ -18,6 +19,63 @@ const PORT = process.env.PORT || 3000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+/* ============================================================
+   SESSÃO DO PROFESSOR (cookie assinado)
+   Usada para proteger a área de administração. O cookie guarda
+   "id.expiração.assinatura"; sem o segredo não dá para forjar.
+============================================================ */
+// Defina SESSION_SECRET no ambiente; sem ele, um segredo aleatório é gerado
+// a cada inicialização (as sessões abertas caem quando o servidor reinicia).
+const SESSION_SECRET = process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex');
+const COOKIE_SESSAO = 'prof_sessao';
+const DURACAO_SESSAO_MS = 12 * 60 * 60 * 1000;
+
+const assinar = (texto) => crypto.createHmac('sha256', SESSION_SECRET).update(texto).digest('hex');
+
+function abrirSessao(req, res, professorId) {
+  const conteudo = `${professorId}.${Date.now() + DURACAO_SESSAO_MS}`;
+  res.cookie(COOKIE_SESSAO, `${conteudo}.${assinar(conteudo)}`, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: req.secure || req.get('x-forwarded-proto') === 'https',
+    maxAge: DURACAO_SESSAO_MS,
+  });
+}
+
+// Devolve o id do professor da sessão, ou null se não houver sessão válida.
+function professorDaSessao(req) {
+  const cookie = String(req.headers.cookie || '')
+    .split(';')
+    .map((parte) => parte.trim())
+    .find((parte) => parte.startsWith(`${COOKIE_SESSAO}=`));
+  if (!cookie) return null;
+  const [id, expira, assinatura] = decodeURIComponent(cookie.slice(COOKIE_SESSAO.length + 1)).split('.');
+  if (!/^\d+$/.test(id || '') || !/^\d+$/.test(expira || '') || !assinatura) return null;
+  const esperada = Buffer.from(assinar(`${id}.${expira}`));
+  const recebida = Buffer.from(assinatura);
+  if (esperada.length !== recebida.length || !crypto.timingSafeEqual(esperada, recebida)) return null;
+  if (Number(expira) < Date.now()) return null;
+  return id;
+}
+
+// Middleware: só deixa passar o professor administrador logado.
+async function exigirAdmin(req, res, next) {
+  try {
+    const id = professorDaSessao(req);
+    const professor = id ? await professorModel.buscarPorId(id) : null;
+    if (professor && professor.ativo && professor.admin) {
+      req.professor = professor;
+      return next();
+    }
+    if (req.path.startsWith('/api/')) {
+      return res.status(professor ? 403 : 401).json({ erro: 'Acesso restrito ao administrador. Entre novamente com a conta administradora.' });
+    }
+    return res.redirect('/login/professor?erro=admin');
+  } catch (err) {
+    next(err);
+  }
+}
 
 /* ============================================================
    ROTAS DE TELAS (GET)
@@ -75,6 +133,16 @@ app.get('/dashboard-professor', (req, res) => {
 
 app.get('/dashboard-professor/respostas', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'respostas-professor.html'));
+});
+
+app.get('/dashboard-professor/usuarios', exigirAdmin, (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'usuarios-professor.html'));
+});
+
+// Encerra a sessão do professor e volta para a tela inicial.
+app.get('/sair', (req, res) => {
+  res.clearCookie(COOKIE_SESSAO);
+  res.redirect('/');
 });
 
 app.get('/dashboard-professor/feedback', (req, res) => {
@@ -231,6 +299,52 @@ app.get('/api/respostas/:id', async (req, res) => {
 });
 
 /* ============================================================
+   ADMINISTRAÇÃO: CADASTRO DE PROFESSORES
+============================================================ */
+
+// Quem está logado (usado no painel para mostrar o atalho de administração).
+app.get('/api/sessao', async (req, res) => {
+  try {
+    const id = professorDaSessao(req);
+    const professor = id ? await professorModel.buscarPorId(id) : null;
+    if (!professor || !professor.ativo) return res.status(401).json({ erro: 'Sessão não encontrada.' });
+    res.json({ id: professor.id, nome: professor.nome, email: professor.email, admin: Boolean(professor.admin) });
+  } catch (err) {
+    console.error('Erro ao consultar sessão:', err);
+    res.status(500).json({ erro: 'Erro ao consultar a sessão.' });
+  }
+});
+
+app.get('/api/admin/professores', exigirAdmin, async (req, res) => {
+  try {
+    res.json(await professorModel.listar());
+  } catch (err) {
+    console.error('Erro ao listar professores:', err);
+    res.status(500).json({ erro: 'Erro ao buscar os professores.' });
+  }
+});
+
+// Cadastra um professor com a senha padrão (Senac123).
+app.post('/api/admin/professores', exigirAdmin, async (req, res) => {
+  try {
+    const nome = String(req.body.nome || '').trim().replace(/\s+/g, ' ');
+    const email = String(req.body.email || '').trim().toLowerCase();
+    if (nome.length < 3 || nome.length > 120) {
+      return res.status(400).json({ erro: 'Informe o nome completo do professor (3 a 120 caracteres).' });
+    }
+    if (email.length > 160 || !/^[^\s@]+@ms\.senac\.br$/.test(email)) {
+      return res.status(400).json({ erro: 'O e-mail precisa ser corporativo, terminando em @ms.senac.br.' });
+    }
+    const criado = await professorModel.criar(nome, email, professorModel.SENHA_PADRAO);
+    res.status(201).json({ ...criado, senha_padrao: professorModel.SENHA_PADRAO });
+  } catch (err) {
+    if (err.code === '23505') return res.status(409).json({ erro: 'Já existe um professor cadastrado com este e-mail.' });
+    console.error('Erro ao cadastrar professor:', err);
+    res.status(500).json({ erro: 'Erro ao cadastrar o professor.' });
+  }
+});
+
+/* ============================================================
    ROTAS DE ENVIO DE DADOS (POST)
 ============================================================ */
 
@@ -255,11 +369,7 @@ app.post('/login/aluno', async (req, res) => {
 app.post('/login/professor', async (req, res) => {
   try {
     const { email, senha } = req.body;
-    let emailNormalizado = String(email || '').trim().toLowerCase();
-    // Compatibilidade com o endereço antigo da conta de demonstração.
-    if (emailNormalizado === 'prof.carlos@senac.br') {
-      emailNormalizado = 'prof.carlos@ms.senac.br';
-    }
+    const emailNormalizado = String(email || '').trim().toLowerCase();
     if (!/^[^\s@]+@ms\.senac\.br$/.test(emailNormalizado)) {
       return res.redirect('/login/professor?erro=email-corporativo');
     }
@@ -274,9 +384,9 @@ app.post('/login/professor', async (req, res) => {
       return res.redirect('/login/professor?erro=credenciais');
     }
 
-    res.redirect(
-      `/dashboard-professor?id=${professor.id}&email=${encodeURIComponent(professor.email)}`
-    );
+    abrirSessao(req, res, professor.id);
+    const q = new URLSearchParams({ id: String(professor.id), email: professor.email, nome: professor.nome });
+    res.redirect(`/dashboard-professor?${q.toString()}`);
   } catch (err) {
     console.error(err);
     res.status(500).send('Erro ao processar login do professor.');
@@ -370,6 +480,8 @@ app.listen(PORT, async () => {
     // Garante as colunas novas (ex.: nota e competências do feedback) em bancos já existentes.
     try {
       await aplicarMigracoes();
+      const contaAdmin = await professorModel.garantirAdministrador();
+      console.log(`Conta administradora (${professorModel.ADMIN.email}) ${contaAdmin}.`);
     } catch (err) {
       console.error('Erro ao aplicar migrações:', err.message);
     }

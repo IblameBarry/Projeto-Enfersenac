@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS public.professor (
     senha_hash VARCHAR(255) COLLATE public.mysql_unicode_ci NOT NULL DEFAULT '$2b$10$tJcm/OFcHW3Z8vGu.4u7yeJDYks9d.fF9r7pzGskZ6BBp/BnNpMRK',
     foto_url VARCHAR(255) COLLATE public.mysql_unicode_ci,
     ativo BOOLEAN NOT NULL DEFAULT TRUE,
+    admin BOOLEAN NOT NULL DEFAULT FALSE,
     criado_em TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT uq_professor_email UNIQUE (email)
 );

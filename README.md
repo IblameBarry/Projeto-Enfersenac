@@ -23,7 +23,15 @@ Abra http://localhost:3000.
 npm run db:seed
 ```
 
-O seed cria o professor de teste e uma história apenas se ainda não existirem. A senha padrão depende do valor `DEFAULT` da coluna `professor.senha_hash` definido no schema instalado.
+O seed garante a conta administradora e cria uma história de exemplo apenas se ainda não existir.
+
+## Conta administradora e cadastro de professores
+
+- Administrador: **Nathan Fusinato Sacaramal** — `nathan.sacaramal@ms.senac.br`, senha inicial `Senac123`.
+- A conta é garantida automaticamente quando o servidor inicia. Se ainda existir a antiga conta de demonstração do Carlos, ela é convertida na conta do Nathan (as histórias e feedbacks publicados continuam no painel); o e-mail do Carlos deixa de entrar.
+- Logado como administrador, o painel mostra o botão **Professores** (`/dashboard-professor/usuarios`), onde é possível cadastrar novos professores com nome e e-mail `@ms.senac.br`. Todos recebem a senha padrão `Senac123`.
+- O acesso à administração é validado no servidor por um cookie de sessão assinado. Configure `SESSION_SECRET` (texto longo e aleatório) no Render; sem ele, as sessões caem sempre que o servidor reinicia.
+- O fuso usado para o "dia de hoje" (prazo das histórias) é `APP_TIMEZONE`, padrão `America/Campo_Grande`.
 
 ## Banco
 
@@ -45,7 +53,7 @@ Também é possível colar o conteúdo do arquivo `.sql` no SQL Editor do Supaba
 
 - Os caminhos do logotipo foram padronizados para corresponder exatamente ao nome `public/img/logo_SenacF.png` (Linux diferencia maiúsculas e minúsculas).
 - O login docente aceita somente endereços terminados em `@ms.senac.br`.
-- A conta de demonstração só é criada/atualizada ao executar `npm run db:seed` com `DATABASE_URL` apontando para o banco correto. Não execute o seed sem confirmar o banco, pois ele altera a conta de demonstração e cria uma história de exemplo.
+- O seed (`npm run db:seed`) cria uma história de exemplo no banco apontado por `DATABASE_URL`. Não execute sem confirmar o banco.
 - Configure `DATABASE_URL`, `DB_SSL=true` e `DB_SSL_REJECT_UNAUTHORIZED=false` separadamente no Render. Nunca coloque credenciais reais em `.env.example` ou no repositório.
 
 
