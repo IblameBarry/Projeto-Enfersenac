@@ -96,6 +96,20 @@ app.get('/api/professores/:id/historias', async (req, res) => {
   }
 });
 
+// Uma história específica (usada no prontuário do aluno para exibir o caso escolhido).
+app.get('/api/historias/:id', async (req, res) => {
+  try {
+    if (!/^\d+$/.test(String(req.params.id))) return res.status(400).json({ erro: 'ID de história inválido.' });
+    const historia = await historiaModel.buscarPorId(req.params.id);
+    if (!historia) return res.status(404).json({ erro: 'História não encontrada.' });
+    const { id, codigo, titulo, enunciado, data_expiracao, status } = historia;
+    res.json({ id, codigo, titulo, enunciado, data_expiracao, status });
+  } catch (err) {
+    console.error('Erro ao buscar história:', err);
+    res.status(500).json({ erro: 'Erro ao buscar a história.' });
+  }
+});
+
 // Contagem do que será apagado junto com a história (usado no aviso antes de excluir).
 app.get('/api/historias/:id/vinculos', async (req, res) => {
   try {

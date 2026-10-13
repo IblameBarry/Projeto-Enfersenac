@@ -34,14 +34,13 @@
           <div class="caso-header">
             <div class="caso-title-wrap">
               <i class="fa-regular fa-clipboard caso-icon"></i>
-              <h2 class="caso-title">Caso Clínico / História do Paciente</h2>
+              <h2 class="caso-title" id="casoTitulo">Caso Clínico / História do Paciente</h2>
             </div>
-            <span class="caso-id">ID: #NUR-3024</span>
+            <span class="caso-id" id="casoCodigo" hidden></span>
           </div>
 
-          <p class="caso-text">
-            Paciente M.J.S, 48 anos, sexo feminino, comparece ao ambulatório queixando-se de cefaleia occipital constante de intensidade moderada (6/10) e dores lombares persistentes após turnos laborais de 8 horas em indústria têxtil (operadora de tear). Relata diagnóstico prévio de hipertensão arterial sistêmica, fazendo uso irregular de hidroclorotiazida. Refere antecedente familiar de diabetes mellitus (mãe). Ao exame físico: lúcida, orientada no tempo e espaço, normocorada. Dados vitais: PA 150/95 mmHg, FC 82 bpm, FR 18 irpm, Temp 36.5 °C. Relata uso diário de EPIs obrigatórios (máscara e protetor auricular), porém queixa-se de desconforto lombar contínuo devido ao tempo prolongado em pé.
-          </p>
+          <!-- Preenchido via JavaScript com a história escolhida pelo aluno (?historia_id=) -->
+          <p class="caso-text" id="casoTexto" style="white-space: pre-line;">Carregando história…</p>
 
           <div class="alerta-leitura">
             <i class="fa-solid fa-triangle-exclamation alerta-icon"></i>
@@ -421,8 +420,8 @@
 
       <div class="footer-right">
         <div class="dock-user-info">
-          <span class="dock-user-name" id="dockNome">Aluno: João Silva</span>
-          <span class="dock-user-turma" id="dockTurma">Turma: Técnico em Enfermagem - Cohorte B</span>
+          <span class="dock-user-name" id="dockNome">Aluno</span>
+          <span class="dock-user-turma" id="dockTurma">Turma não informada</span>
         </div>
         <a href="/" class="dock-btn-logout">Sair</a>
       </div>
@@ -445,8 +444,33 @@
     document.getElementById('aluno_id').value = alunoId || '';
     document.getElementById('historia_id').value = historiaId || '';
 
-    if (nome) document.getElementById('dockNome').textContent = 'Aluno: ' + nome;
-    if (turma) document.getElementById('dockTurma').textContent = 'Turma: ' + turma;
+    if (nomeAluno) document.getElementById('dockNome').textContent = 'Aluno: ' + nomeAluno;
+    if (turmaAluno) document.getElementById('dockTurma').textContent = 'Turma: ' + turmaAluno;
+
+    // ---- Carrega o caso clínico da história escolhida no portal ----
+    const casoTexto = document.getElementById('casoTexto');
+    const casoCodigo = document.getElementById('casoCodigo');
+    const btnEnviar = document.querySelector('.btn-enviar-prontuario');
+    function historiaIndisponivel(mensagem) {
+      casoTexto.textContent = mensagem;
+      if (btnEnviar) btnEnviar.disabled = true; // sem história válida, não há o que enviar
+    }
+    async function carregarHistoria() {
+      if (!historiaId) return historiaIndisponivel('Nenhuma história foi selecionada. Volte ao portal e escolha uma história para responder.');
+      try {
+        const res = await fetch('/api/historias/' + encodeURIComponent(historiaId));
+        if (res.status === 404) return historiaIndisponivel('Esta história não está mais disponível. Volte ao portal e escolha outra.');
+        if (!res.ok) throw new Error();
+        const historia = await res.json();
+        document.getElementById('casoTitulo').textContent = historia.titulo || 'Caso Clínico / História do Paciente';
+        document.title = (historia.titulo ? historia.titulo + ' - ' : '') + document.title;
+        casoTexto.textContent = historia.enunciado || 'Esta história não possui enunciado.';
+        if (historia.codigo) { casoCodigo.textContent = 'ID: #' + historia.codigo; casoCodigo.hidden = false; }
+      } catch {
+        casoTexto.textContent = 'Não foi possível carregar a história. Recarregue a página para tentar novamente.';
+      }
+    }
+    carregarHistoria();
 
     const formProntuario = document.getElementById('formProntuario');
     const draftKey = `pontuario_prontuario_${alunoId || 'aluno'}_${historiaId || 'historia'}`;
